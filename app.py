@@ -1,9 +1,9 @@
 import flet as ft
 import openpyxl # Manipular Excel
-import os
+import os # Acessa documentos através do sistema operacinal
+from datetime import datetime # Capturar informações de data e hora
 
 def main(page: ft.Page):
-
 
     tipo = ft.Dropdown(
         label='Tipo de Transação',
@@ -42,6 +42,7 @@ def main(page: ft.Page):
         ],
     )
 
+
     def formulario(e):
         alerta.open = True
         page.update()
@@ -49,30 +50,46 @@ def main(page: ft.Page):
     def salvar_dados(e):
         arquivo = "transacoes.xlsx"
 
+        agora = datetime.now()
+        ano = agora.year
+        mes = agora.month
+        dia = agora.day
+        hora = agora.strftime("%H:%M:%S")
+
         # Verificando se o arquivo já existe
         if not os.path.exists(arquivo):
             # Cria um novo arquivo Excel e defino os cabeçalhos
             workbook = openpyxl.Workbook()
             sheet = workbook.active
             sheet.title = "Transações"
-            sheet.append(["Tipo", "Descrição", "Categoria", "Valor", "Forma de Transação"])
+            sheet.append(["Tipo", "Descrição", "Categoria", "Valor", "Forma de Transação", "Ano", "Mês", "Dia", "Hora"])
             workbook.save(arquivo)
 
         # Abrir o arquivo Excel para adicionar novos dados
         workbook = openpyxl.load_workbook(arquivo)
         sheet = workbook.active
-
         # Adicinar os dados do formulário ao Excel
         sheet.append([
             tipo.value,
             descricao.value,
             categoria.value,
             valor.value,
-            forma.value
+            forma.value,
+            ano,
+            mes,
+            dia,
+            hora
         ])
-
         # Salvar o arquivo
         workbook.save(arquivo)
+        # Limpando os campos do formulário
+        tipo.value = None
+        descricao.value = " "
+        categoria.value = None
+        valor.value = " "
+        forma.value = None
+        
+
         alerta.open = False
         page.update()
 
@@ -161,8 +178,11 @@ def main(page: ft.Page):
         open=False
     )
 
-    # Associando o alerta a page
+
+# Associando o alerta a page
     page.overlay.append(alerta)
+    page.update()
+
     
     layout = ft.Container(
         margin=0,
@@ -176,7 +196,6 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         saldo_total,
-
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([
