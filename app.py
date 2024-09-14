@@ -5,6 +5,49 @@ from datetime import datetime # Capturar informações de data e hora
 
 def main(page: ft.Page):
 
+    total_entrada = ft.Container(
+        border_radius=5,
+        height=60,
+        width=120,
+        bgcolor=ft.colors.BLACK12,
+        content=ft.Column(
+            [
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    )
+
+    total_saida = ft.Container(
+        border_radius=5,
+        height=60,
+        width=120,
+        bgcolor=ft.colors.BLACK12,
+        content=ft.Column(
+            [
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    )
+
+    saldo_total = ft.Container(
+        margin=10,
+        expand=True,
+        border_radius=5,
+        content=ft.Row(
+            [
+                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700),
+                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_EVENLY
+        )
+    )
+
     tipo = ft.Dropdown(
         label='Tipo de Transação',
         options=
@@ -41,7 +84,6 @@ def main(page: ft.Page):
             ft.dropdown.Option('Fiado'),                    
         ],
     )
-
 
     def formulario(e):
         alerta.open = True
@@ -82,6 +124,7 @@ def main(page: ft.Page):
         ])
         # Salvar o arquivo
         workbook.save(arquivo)
+
         # Limpando os campos do formulário
         tipo.value = None
         descricao.value = " "
@@ -94,49 +137,6 @@ def main(page: ft.Page):
 
         alerta.open = False
         page.update()
-
-    total_entrada = ft.Container(
-        border_radius=5,
-        height=60,
-        width=100,
-        bgcolor=ft.colors.BLACK12,
-        content=ft.Column(
-            [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
-    )
-
-    total_saida = ft.Container(
-        border_radius=5,
-        height=60,
-        width=100,
-        bgcolor=ft.colors.BLACK12,
-        content=ft.Column(
-            [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
-    )
-
-    saldo_total = ft.Container(
-        margin=10,
-        expand=True,
-        border_radius=5,
-        content=ft.Row(
-            [
-                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700),
-                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_EVENLY
-        )
-    )
 
     def atualizar_historico():
         # Limpando o histórico anterior
@@ -165,22 +165,33 @@ def main(page: ft.Page):
                     )
                 )
                 # adiconar o novo container ao container de histórico
-                historico.content.controls.append(trasacao)
+                historico.content.controls.append(trasacao)    
+        atualizar_saldos()
 
     def atualizar_saldos():
-        if os.path.exists("transacoes.xlsx"):
-            workbook = openpyxl.load_workbook("transacoes.xlsx")
+
+        # Verificando se o arquivo já existe
+        if not os.path.exists("transacoes.xlsx"):
+            # Cria um novo arquivo Excel e defino os cabeçalhos
+            workbook = openpyxl.Workbook()
             sheet = workbook.active
-            en = 0
-            sa = 0
+            sheet.title = "Transações"
+            sheet.append(["Tipo", "Descrição", "Categoria", "Valor", "Forma de Transação", "Ano", "Mês", "Dia", "Hora"])
+            workbook.save("transacoes.xlsx")
+        
+
+        workbook = openpyxl.load_workbook("transacoes.xlsx")
+        sheet = workbook.active
+        en = 0
+        sa = 0
             
-            for row in sheet.iter_rows(min_row=2, values_only=True):
-                valor = float(row[3])
-                if row[0] == 'Entradas':
-                    en += valor
-                elif row[0] == 'Saídas':
-                    sa += valor
-            to = en - sa
+        for row in sheet.iter_rows(min_row=2, values_only=True):
+            valor = float(row[3])
+            if row[0] == 'Entrada':
+                en += valor
+            elif row[0] == 'Saída':
+                sa += valor
+        to = en - sa
 
         total_entrada.content.controls[0].value = f"R$ {en:.2f}"
         total_saida.content.controls[0].value = f"R$ {sa:.2f}"
@@ -188,9 +199,7 @@ def main(page: ft.Page):
 
         page.update()
 
-             
-        
-        
+
     historico = ft.Container(
         expand=True,
         border_radius = 10,
@@ -218,7 +227,6 @@ def main(page: ft.Page):
         ],
         open=False
     )
-
 
 # Associando o alerta a page
     page.overlay.append(alerta)
@@ -253,12 +261,10 @@ def main(page: ft.Page):
 
     # Inicia o app buscando o histórico atualizado
     atualizar_historico()
-    atualizar_saldos()
 
     page.add(
         layout,
         ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
     )
-    
 
 ft.app(target=main)
