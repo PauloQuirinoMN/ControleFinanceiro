@@ -89,34 +89,20 @@ def main(page: ft.Page):
         valor.value = " "
         forma.value = None
         
+        # Atualiza o histórico assim que os dados forem salvos
+        atualizar_historico()
 
         alerta.open = False
         page.update()
 
-
-    saldo_total = ft.Container(
-        border_radius=20,
+    total_entrada = ft.Container(
+        border_radius=5,
         height=60,
         width=100,
         bgcolor=ft.colors.BLACK12,
         content=ft.Column(
             [
-                ft.Text(value='1.590,00', size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700),
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
-    )
-
-    total_entrada = ft.Container(
-        border_radius=20,
-        height=60,
-        width=100,
-        bgcolor=ft.colors.BLUE_200,
-        content=ft.Column(
-            [
-                ft.Text(value='2.460,00', size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
                 ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -125,13 +111,13 @@ def main(page: ft.Page):
     )
 
     total_saida = ft.Container(
-        border_radius=20,
+        border_radius=5,
         height=60,
         width=100,
-        bgcolor=ft.colors.RED_200,
+        bgcolor=ft.colors.BLACK12,
         content=ft.Column(
             [
-                ft.Text(value='1.025,00', size=20, weight=ft.FontWeight.BOLD),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
                 ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -139,26 +125,81 @@ def main(page: ft.Page):
         )
     )
 
-    historico = ft.DataTable(
-        border_radius=10,
-        bgcolor=ft.colors.CYAN_100,
-        vertical_lines=ft.BorderSide(width=2, color=ft.colors.BLACK12),
-        horizontal_lines=ft.BorderSide(width=2, color=ft.colors.BLACK),
-        column_spacing=20,
-        columns=[
-            ft.DataColumn(label=ft.Text('Descrição')),
-            ft.DataColumn(label=ft.Text('Data')),
-            ft.DataColumn(label=ft.Text('Valor')),
-        ],
-        rows=[
-            ft.DataRow(
-                cells=[
-                    ft.DataCell(content=ft.Text(value='Uber')),
-                    ft.DataCell(content=ft.Text(value='11/09/2024')),
-                    ft.DataCell(content=ft.Text(value='5.58')),
-                ]
-            )
-        ]
+    saldo_total = ft.Container(
+        margin=10,
+        expand=True,
+        border_radius=5,
+        content=ft.Row(
+            [
+                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700),
+                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_EVENLY
+        )
+    )
+
+    def atualizar_historico():
+        # Limpando o histórico anterior
+        historico.content.controls.clear()
+
+        if os.path.exists("transacoes.xlsx"):
+            workbook = openpyxl.load_workbook("transacoes.xlsx")
+            sheet = workbook.active
+
+            # iterar sobre as linhas do excel, começando da segunda linha
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                # Cria um novo container para cada transação
+                trasacao = ft.Container(
+                    margin=2,
+                    padding=10,
+                    bgcolor=ft.colors.GREEN_50,
+                    border_radius=5,
+                    content=ft.Row(
+                        [
+                            ft.Text(row[1], width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.BOLD),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                        spacing=10,
+                    )
+                )
+                # adiconar o novo container ao container de histórico
+                historico.content.controls.append(trasacao)
+
+    def atualizar_saldos():
+        if os.path.exists("transacoes.xlsx"):
+            workbook = openpyxl.load_workbook("transacoes.xlsx")
+            sheet = workbook.active
+            en = 0
+            sa = 0
+            
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                valor = float(row[3])
+                if row[0] == 'Entradas':
+                    en += valor
+                elif row[0] == 'Saídas':
+                    sa += valor
+            to = en - sa
+
+        total_entrada.content.controls[0].value = f"R$ {en:.2f}"
+        total_saida.content.controls[0].value = f"R$ {sa:.2f}"
+        saldo_total.content.controls[1].value =  f"R$ {to:.2f}"
+
+        page.update()
+
+             
+        
+        
+    historico = ft.Container(
+        expand=True,
+        border_radius = 10,
+        padding = 10,
+        margin = 10,
+        content = ft.Column(
+            [],
+            scroll=ft.ScrollMode.AUTO
+        )
     )
     
     alerta = ft.AlertDialog(
@@ -185,35 +226,39 @@ def main(page: ft.Page):
 
     
     layout = ft.Container(
-        margin=0,
         expand=True,
-        bgcolor=ft.colors.BLUE_100,
-        border_radius=20,
-        padding=10,
+        bgcolor=ft.colors.BLACK26,
+        border_radius=5,
+        padding=5,
         content=ft.Column(
             [
-                ft.Row([ft.Text(value='FINANCEIRO', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.GREEN_900)], alignment=ft.MainAxisAlignment.START),
-                ft.Row(
-                    [
-                        saldo_total,
-                    ], 
-                    alignment=ft.MainAxisAlignment.CENTER),
+                ft.Row([ft.Text(value='Saldos', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900)], alignment=ft.MainAxisAlignment.START),
                 ft.Row([
                     total_entrada,
                     total_saida
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_AROUND),
+                ft.Row(
+                    [
+                        saldo_total,
+                    ], 
+                    alignment=ft.MainAxisAlignment.CENTER),
                 ft.Divider(),
-                ft.Text(value='Transações', size=20, color=ft.colors.LIGHT_BLUE_500 ,weight=ft.FontWeight.BOLD),
+                ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900),
                 historico, 
             ],
             spacing=10,
         )
     )
 
+    # Inicia o app buscando o histórico atualizado
+    atualizar_historico()
+    atualizar_saldos()
+
     page.add(
         layout,
         ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
     )
+    
 
 ft.app(target=main)
