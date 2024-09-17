@@ -85,6 +85,22 @@ def main(page: ft.Page):
         ],
     )
 
+    def abrirdate(e):
+        data_picker.pick_date()
+        page.update()
+
+
+    data_picker = ft.DatePicker(
+        help_text='Selecione Data',
+        cancel_text='Cancelar',
+        confirm_text='Confirmar',
+        error_format_text='Data Inválida',
+        field_hint_text='Mês/Dia/Ano',
+        field_label_text='Escolha uma Data',
+    )
+
+    page.overlay.append(data_picker)
+
     def formulario(e):
         alerta.open = True
         page.update()
@@ -211,6 +227,7 @@ def main(page: ft.Page):
         )
     )
     
+    
     alerta = ft.AlertDialog(
         title=ft.Text(value='Nova transação'),
         content=ft.Column(
@@ -220,6 +237,13 @@ def main(page: ft.Page):
                 categoria,
                 valor,
                 forma,
+                ft.Row(
+                    [
+                        ft.IconButton(icon=ft.icons.CALENDAR_TODAY, on_click=abrirdate),
+                        #ft.IconButton(icon=ft.icons.NOW_WIDGETS, on_click=horamanual)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND
+                )
             ]
         ),
         actions=[
