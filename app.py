@@ -159,6 +159,10 @@ def main(page: ft.Page):
         categoria.value = None
         valor.value = " "
         forma.value = None
+
+        anom.value = ""
+        mesm.value = ""
+        diam.value = ""
         
         # Atualiza o histórico assim que os dados forem salvos
         atualizar_historico()
