@@ -104,12 +104,41 @@ def main(page: ft.Page):
         )
     )
 
+    def ok_fecha_alerta_erro(e):
+        page.dialog.open=False
+        page.update()
 
     def formulario(e):
         alerta.open = True
         page.update()
 
     def salvar_dados(e):
+
+        def mostrar_alerta_erro(mensagem):
+            alerte_erro = ft.AlertDialog(
+                title=ft.Text("Presta Atenção Abestado!"),
+                content=ft.Text(mensagem),
+                actions=[
+                    ft.TextButton('Ok', on_click=ok_fecha_alerta_erro),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+                open=True
+            )
+            page.dialog = alerte_erro
+            page.update()
+        
+        if not descricao.value.strip():
+            mostrar_alerta_erro("Descrição é obrigatória!")
+            return
+        try:
+            valor_float = float(valor.value)
+            if valor_float <= 0:
+                raise ValueError("Valor deve ser maior que '0'!")
+        except ValueError:
+            mostrar_alerta_erro("Valor inválido!")
+            return 
+   
+
         arquivo = "transacoes.xlsx"
 
         agora = datetime.now()
@@ -262,7 +291,7 @@ def main(page: ft.Page):
         open=False
     )
 
-# Associando o alerta a page
+    # Associando o alerta a page
     page.overlay.append(alerta)
     page.update()
 
