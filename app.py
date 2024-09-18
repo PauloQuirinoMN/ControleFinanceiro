@@ -57,6 +57,8 @@ def main(page: ft.Page):
         ],
     )
 
+    btn_baixar_dados = ft.IconButton(icon=ft.icons.DOWNLOAD, icon_size=20, disabled=True,  on_click=lambda _:print('aqui baixar e limpa dos dados'))
+
     descricao = ft.TextField(label='Descrição')
 
     categoria = ft.Dropdown(
@@ -85,21 +87,23 @@ def main(page: ft.Page):
         ],
     )
 
-    def abrirdate(e):
-        data_picker.pick_date()
-        page.update()
-
-
-    data_picker = ft.DatePicker(
-        help_text='Selecione Data',
-        cancel_text='Cancelar',
-        confirm_text='Confirmar',
-        error_format_text='Data Inválida',
-        field_hint_text='Mês/Dia/Ano',
-        field_label_text='Escolha uma Data',
+    anom = ft.TextField(label='Ano', height=30, width=80)
+    mesm = ft.TextField(label='Mês', height=30, width=80)
+    diam = ft.TextField(label='Dia', height=30, width=80)
+   
+    data_manual = ft.Container(
+        content=ft.Column(
+            [
+                ft.Divider(),
+                ft.Text(value='Caso não preenchas data, será salvo a data de agora', size=10),
+                anom,
+                mesm,
+                diam,
+                ft.Divider(),
+            ]
+        )
     )
 
-    page.overlay.append(data_picker)
 
     def formulario(e):
         alerta.open = True
@@ -109,11 +113,18 @@ def main(page: ft.Page):
         arquivo = "transacoes.xlsx"
 
         agora = datetime.now()
-        ano = agora.year
-        mes = agora.month
-        dia = agora.day
-        hora = agora.strftime("%H:%M:%S")
 
+        if anom.value == "" and mesm.value == "" and diam.value == "":
+            ano = agora.year
+            mes = agora.month
+            dia = agora.day
+            hora = agora.strftime("%H:%M:%S")
+        else:
+            ano = anom.value if anom.value else agora.year
+            mes = mesm.value if mesm.value else agora.month
+            dia = diam.value if diam.value else agora.day
+            hora = agora.strftime("%H:%M:%S") 
+            
         # Verificando se o arquivo já existe
         if not os.path.exists(arquivo):
             # Cria um novo arquivo Excel e defino os cabeçalhos
@@ -127,6 +138,7 @@ def main(page: ft.Page):
         workbook = openpyxl.load_workbook(arquivo)
         sheet = workbook.active
         # Adicinar os dados do formulário ao Excel
+
         sheet.append([
             tipo.value,
             descricao.value,
@@ -237,13 +249,7 @@ def main(page: ft.Page):
                 categoria,
                 valor,
                 forma,
-                ft.Row(
-                    [
-                        ft.IconButton(icon=ft.icons.CALENDAR_TODAY, on_click=abrirdate),
-                        #ft.IconButton(icon=ft.icons.NOW_WIDGETS, on_click=horamanual)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_AROUND
-                )
+                data_manual,
             ]
         ),
         actions=[
@@ -256,7 +262,7 @@ def main(page: ft.Page):
     page.overlay.append(alerta)
     page.update()
 
-    
+
     layout = ft.Container(
         expand=True,
         bgcolor=ft.colors.BLACK26,
@@ -276,8 +282,14 @@ def main(page: ft.Page):
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER),
                 ft.Divider(),
-                ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900),
-                historico, 
+                ft.Row(
+                    [
+                        ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900),
+                        btn_baixar_dados,
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                ),
+                historico 
             ],
             spacing=10,
         )
