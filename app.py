@@ -5,15 +5,21 @@ from datetime import datetime # Capturar informações de data e hora
 
 def main(page: ft.Page):
 
+  
+    branco = "#F4F5F0"
+    azul = "#4895EF"
+    verde = "#75975e"
+    grafite = '#747169'
+    vermelho = '#ee6b6e'
+
     total_entrada = ft.Container(
         border_radius=5,
         height=60,
         width=120,
-        bgcolor=ft.colors.BLACK12,
         content=ft.Column(
             [
                 ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700),
+                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700, color=vermelho),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -24,11 +30,10 @@ def main(page: ft.Page):
         border_radius=5,
         height=60,
         width=120,
-        bgcolor=ft.colors.BLACK12,
         content=ft.Column(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=azul),
+                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700, color=verde),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -41,7 +46,7 @@ def main(page: ft.Page):
         border_radius=5,
         content=ft.Row(
             [
-                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700),
+                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700, color=grafite),
                 ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD),
             ],
             alignment=ft.MainAxisAlignment.SPACE_EVENLY
@@ -57,8 +62,6 @@ def main(page: ft.Page):
         ],
     )
 
-    btn_baixar_dados = ft.IconButton(icon=ft.icons.DOWNLOAD, icon_size=20, disabled=True,  on_click=lambda _:print('aqui baixar e limpa dos dados'))
-
     descricao = ft.TextField(label='Descrição')
 
     categoria = ft.Dropdown(
@@ -71,7 +74,8 @@ def main(page: ft.Page):
             ft.dropdown.Option('Moradia'),
             ft.dropdown.Option('Vestiuário'),
             ft.dropdown.Option('Esposte'),
-            ft.dropdown.Option('Empréstimos'),                   
+            ft.dropdown.Option('Empréstimos'),  
+            ft.dropdown.Option('Outros'),                 
         ]
     )
 
@@ -83,7 +87,8 @@ def main(page: ft.Page):
             ft.dropdown.Option('Dinheiro'),
             ft.dropdown.Option('Cartão'), 
             ft.dropdown.Option('Pix'),
-            ft.dropdown.Option('Fiado'),                    
+            ft.dropdown.Option('Fiado'), 
+            ft.dropdown.Option('Outro'),                   
         ],
     )
 
@@ -95,7 +100,7 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Divider(),
-                ft.Text(value='Caso não preenchas data, será salvo a data de agora', size=10),
+                ft.Text(value='Ano, Mês e Dia para períodos passados', size=15, italic=True, color=vermelho),
                 anom,
                 mesm,
                 diam,
@@ -104,38 +109,64 @@ def main(page: ft.Page):
         )
     )
 
-    def ok_fecha_alerta_erro(e):
-        page.dialog.open=False
-        page.update()
+    historico = ft.Container(
+        expand=True,
+        padding = 10,
+        margin = 5,
+        content = ft.Column(
+            [],
+            scroll=ft.ScrollMode.AUTO
+        )
+    )
 
-    def formulario(e):
+    # adicionar o alerta ao overlay
+    def adicionar_alerta(alerta):
+        if alerta not in page.overlay:
+            page.overlay.append(alerta)
         alerta.open = True
         page.update()
 
-    def salvar_dados(e):
-
-        def mostrar_alerta_erro(mensagem):
+    # remover o alerta ao overlay
+    def remover_alerta(alerta):
+        alerta.open = False
+        page.update()
+    
+    def mostrar_alerta_erro_descricao():
             alerte_erro = ft.AlertDialog(
-                title=ft.Text("Presta Atenção Abestado!"),
-                content=ft.Text(mensagem),
+                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+                content=ft.Text('Descrição é obrigatório', color=vermelho),
                 actions=[
-                    ft.TextButton('Ok', on_click=ok_fecha_alerta_erro),
+                    ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_erro)),
                 ],
                 actions_alignment=ft.MainAxisAlignment.END,
                 open=True
             )
-            page.dialog = alerte_erro
-            page.update()
+            adicionar_alerta(alerte_erro)
+
+    def mostrar_alerta_erro_valor():
+            alerte_erro = ft.AlertDialog(
+                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+                content=ft.Text('Valor é obrigatório', color=vermelho),
+                actions=[
+                    ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_erro)),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+                open=True
+            )
+            adicionar_alerta(alerte_erro)
+    
+
+    def salvar_dados(e):
         
         if not descricao.value.strip():
-            mostrar_alerta_erro("Descrição é obrigatória!")
+            mostrar_alerta_erro_descricao()
             return
         try:
             valor_float = float(valor.value)
             if valor_float <= 0:
                 raise ValueError("Valor deve ser maior que '0'!")
         except ValueError:
-            mostrar_alerta_erro("Valor inválido!")
+            mostrar_alerta_erro_valor()
             return 
    
 
@@ -196,7 +227,7 @@ def main(page: ft.Page):
         # Atualiza o histórico assim que os dados forem salvos
         atualizar_historico()
 
-        alerta.open = False
+        alerta_Form.open = False
         page.update()
 
     def atualizar_historico():
@@ -217,9 +248,9 @@ def main(page: ft.Page):
                     border_radius=5,
                     content=ft.Row(
                         [
-                            ft.Text(row[1], width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.BOLD),
-                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
-                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                            ft.Text(row[1], width=70, size=12, color=grafite, weight=ft.FontWeight.BOLD),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=grafite, weight=ft.FontWeight.W_600),
+                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=grafite, weight=ft.FontWeight.W_600),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
                         spacing=10,
@@ -260,20 +291,7 @@ def main(page: ft.Page):
 
         page.update()
 
-
-    historico = ft.Container(
-        expand=True,
-        border_radius = 10,
-        padding = 10,
-        margin = 10,
-        content = ft.Column(
-            [],
-            scroll=ft.ScrollMode.AUTO
-        )
-    )
-    
-    
-    alerta = ft.AlertDialog(
+    alerta_Form = ft.AlertDialog(
         title=ft.Text(value='Nova transação'),
         content=ft.Column(
             [
@@ -292,18 +310,23 @@ def main(page: ft.Page):
     )
 
     # Associando o alerta a page
-    page.overlay.append(alerta)
+    page.overlay.append(alerta_Form)
     page.update()
+
+    # Abrir alerta do formulário
+    def formulario(e):
+        alerta_Form.open = True
+        page.update()
 
 
     layout = ft.Container(
         expand=True,
-        bgcolor=ft.colors.BLACK26,
+        bgcolor=branco,
         border_radius=5,
         padding=5,
         content=ft.Column(
             [
-                ft.Row([ft.Text(value='Saldos', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900)], alignment=ft.MainAxisAlignment.START),
+                ft.Row([ft.Text(value='Saldos', size=20, weight=ft.FontWeight.BOLD, color=azul)], alignment=ft.MainAxisAlignment.START),
                 ft.Row([
                     total_entrada,
                     total_saida
@@ -317,8 +340,7 @@ def main(page: ft.Page):
                 ft.Divider(),
                 ft.Row(
                     [
-                        ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.BLUE_900),
-                        btn_baixar_dados,
+                        ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=azul),
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
