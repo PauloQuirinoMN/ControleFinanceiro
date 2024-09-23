@@ -18,8 +18,8 @@ def main(page: ft.Page):
         width=120,
         content=ft.Column(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD),
-                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700, color=vermelho),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
+                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700, color=azul),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -32,8 +32,8 @@ def main(page: ft.Page):
         width=120,
         content=ft.Column(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=azul),
-                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700, color=verde),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
+                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700, color=vermelho),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -47,7 +47,7 @@ def main(page: ft.Page):
         content=ft.Row(
             [
                 ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700, color=grafite),
-                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD),
+                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD, color=verde),
             ],
             alignment=ft.MainAxisAlignment.SPACE_EVENLY
         )
@@ -292,7 +292,7 @@ def main(page: ft.Page):
         page.update()
 
     alerta_Form = ft.AlertDialog(
-        title=ft.Text(value='Nova transação'),
+        title=ft.Text(value='Nova transação', color=grafite),
         content=ft.Column(
             [
                 tipo, 
@@ -317,7 +317,57 @@ def main(page: ft.Page):
     def formulario(e):
         alerta_Form.open = True
         page.update()
+    
+    def limpardados(e):
+        historico.content.controls.clear() # Limpa o histórico da interface
+        arquivo = "transacoes.xlsx" # Limpa o conteúdo do xlsx
+        if os.path.exists(arquivo):
+            workbook = openpyxl.load_workbook(arquivo)
+            sheet = workbook.active
 
+            # Manter o cabeçalho e apagar as outras linhas
+            for row in sheet.iter_rows(min_row=2, max_row=sheet.max_row):
+                for cell in row:
+                    cell.value = None
+            workbook.save(arquivo)
+
+        total_entrada.content.controls[0].value = "R$ 0.00"
+        total_saida.content.controls[0].value = "R$ 0.00"
+        saldo_total.content.controls[1].value = "R$ 0.00"
+
+        page.update()
+    
+    def mostrar_alerta_confirmacao(e):
+        # Criar um Alerta
+        alerta_confirmacao_limpeza = ft.AlertDialog(
+            title=ft.Text("Confirmar Limpeza de dados"),
+            content=ft.Text("Você tem certeza que deseja apagar todos os dados? esta ação é ireversível", color=vermelho, size=25, weight=ft.FontWeight.BOLD, italic=True),
+            actions=[
+                ft.TextButton("Cancelar", on_click=lambda e: remover_alerta(alerta_confirmacao_limpeza)),
+                ft.ElevatedButton("Confirmar", on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
+                                                                   limpardados(e)
+                ]
+                ),
+            ],
+            actions_alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            open=True
+        )
+        adicionar_alerta(alerta_confirmacao_limpeza)
+        atualizar_saldos()
+
+    def adicionar_alerta(alerta):
+        if alerta not in page.overlay:
+            page.overlay.append(alerta)
+        alerta.open = True
+        page.update()  
+
+    def remover_alerta(alerta):
+        alerta.open = False
+        page.update()
+
+
+    analise = ft.IconButton(icon=ft.icons.ANALYTICS, icon_color=verde, icon_size=25, disabled=True)
+    btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
 
     layout = ft.Container(
         expand=True,
@@ -341,6 +391,8 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=azul),
+                        analise,
+                        btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                 ),
@@ -352,6 +404,7 @@ def main(page: ft.Page):
 
     # Inicia o app buscando o histórico atualizado
     atualizar_historico()
+    atualizar_saldos()
 
     page.add(
         layout,
