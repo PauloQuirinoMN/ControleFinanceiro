@@ -92,9 +92,9 @@ def main(page: ft.Page):
         ],
     )
 
-    anom = ft.TextField(label='Ano', height=30, width=80)
-    mesm = ft.TextField(label='Mês', height=30, width=80)
-    diam = ft.TextField(label='Dia', height=30, width=80)
+    anom = ft.TextField(label='Ano', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
+    mesm = ft.TextField(label='Mês', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
+    diam = ft.TextField(label='Dia', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
    
     data_manual = ft.Container(
         content=ft.Column(
@@ -156,7 +156,21 @@ def main(page: ft.Page):
             adicionar_alerta(alerte_erro)
     
 
-    def salvar_dados(e):
+    def salvar_dados(e): 
+
+        if tipo.value == None:
+            alerte_tipo = ft.AlertDialog(
+                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+                content=ft.Text('Tipo é obrigatório', color=vermelho),
+                actions=[
+                    ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_tipo)),
+                ],
+                actions_alignment=ft.MainAxisAlignment.END,
+                open=True
+            )
+            adicionar_alerta(alerte_tipo)
+            return
+
         
         if not descricao.value.strip():
             mostrar_alerta_erro_descricao()
@@ -232,6 +246,7 @@ def main(page: ft.Page):
 
     def atualizar_historico():
         # Limpando o histórico anterior
+        cor = ''
         historico.content.controls.clear()
 
         if os.path.exists("transacoes.xlsx"):
@@ -241,11 +256,20 @@ def main(page: ft.Page):
             # iterar sobre as linhas do excel, começando da segunda linha
             for row in sheet.iter_rows(min_row=2, values_only=True):
                 # Cria um novo container para cada transação
+                tipo = row[0]
+
+                if tipo == "Entrada":
+                    cor = azul
+                elif tipo == "Saída":
+                    cor = vermelho
+               
+            
+
                 trasacao = ft.Container(
+                    border=ft.Border(left=ft.BorderSide(width=4, color=cor)),
                     margin=2,
                     padding=10,
-                    bgcolor=ft.colors.GREEN_50,
-                    border_radius=5,
+                    border_radius=0,
                     content=ft.Row(
                         [
                             ft.Text(row[1], width=70, size=12, color=grafite, weight=ft.FontWeight.BOLD),
@@ -309,6 +333,10 @@ def main(page: ft.Page):
         open=False
     )
 
+
+
+
+
     # Associando o alerta a page
     page.overlay.append(alerta_Form)
     page.update()
@@ -341,10 +369,10 @@ def main(page: ft.Page):
         # Criar um Alerta
         alerta_confirmacao_limpeza = ft.AlertDialog(
             title=ft.Text("Confirmar Limpeza de dados"),
-            content=ft.Text("Você tem certeza que deseja apagar todos os dados? esta ação é ireversível", color=vermelho, size=25, weight=ft.FontWeight.BOLD, italic=True),
+            content=ft.Text("Você tem certeza que deseja apagar todos os dados? esta ação é irreversível", color=vermelho, size=15, weight=ft.FontWeight.BOLD, italic=True),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: remover_alerta(alerta_confirmacao_limpeza)),
-                ft.ElevatedButton("Confirmar", on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
+                ft.ElevatedButton("Confirmar",on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
                                                                    limpardados(e)
                 ]
                 ),
@@ -404,11 +432,10 @@ def main(page: ft.Page):
 
     # Inicia o app buscando o histórico atualizado
     atualizar_historico()
-    atualizar_saldos()
 
     page.add(
         layout,
         ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
     )
 
-ft.app(target=main)
+ft.app(target=main, view=ft.AppView.FLET_APP)
