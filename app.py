@@ -155,12 +155,9 @@ def main(page: ft.Page):
             )
             adicionar_alerta(alerte_erro)
     
-
-    def salvar_dados(e): 
-
-        if tipo.value == None:
+    def mostrar_alerta_erro_tipo():
             alerte_tipo = ft.AlertDialog(
-                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+            title=ft.Text("Presta Atenção Abestado!", color=grafite),
                 content=ft.Text('Tipo é obrigatório', color=vermelho),
                 actions=[
                     ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_tipo)),
@@ -169,9 +166,16 @@ def main(page: ft.Page):
                 open=True
             )
             adicionar_alerta(alerte_tipo)
+
+
+    def salvar_dados(e): 
+
+
+        if tipo.value is None or tipo.value == "":
+            mostrar_alerta_erro_tipo()
             return
 
-        
+    
         if not descricao.value.strip():
             mostrar_alerta_erro_descricao()
             return
@@ -246,7 +250,7 @@ def main(page: ft.Page):
 
     def atualizar_historico():
         # Limpando o histórico anterior
-        cor = ''
+
         historico.content.controls.clear()
 
         if os.path.exists("transacoes.xlsx"):
@@ -256,15 +260,16 @@ def main(page: ft.Page):
             # iterar sobre as linhas do excel, começando da segunda linha
             for row in sheet.iter_rows(min_row=2, values_only=True):
                 # Cria um novo container para cada transação
-                tipo = row[0]
 
+                # definir a cor da borda com base no tipo de transição
+                tipo = row[0]
                 if tipo == "Entrada":
                     cor = azul
                 elif tipo == "Saída":
                     cor = vermelho
-               
-            
-
+                else:
+                    cor = grafite
+                # Criando container para cada transação   
                 trasacao = ft.Container(
                     border=ft.Border(left=ft.BorderSide(width=4, color=cor)),
                     margin=2,
@@ -332,9 +337,6 @@ def main(page: ft.Page):
         ],
         open=False
     )
-
-
-
 
 
     # Associando o alerta a page
