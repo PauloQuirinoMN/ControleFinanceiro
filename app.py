@@ -439,5 +439,5 @@ def main(page: ft.Page):
         layout,
         ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
     )
-
-ft.app(target=main, view=ft.AppView.FLET_APP)
+if __name__ == "__,main__":
+    ft.app(target=main, view=ft.AppView.FLET_APP)
