@@ -404,25 +404,41 @@ def main(page: ft.Page):
         bgcolor=branco,
         border_radius=5,
         padding=5,
-        border=ft.Border(top=ft.BorderSide(width=1, color=ft.colors.BLACK),
-                                         right=ft.BorderSide(width=1, color=ft.colors.BLACK), 
-                                         bottom=ft.BorderSide(width=1, color=ft.colors.BLACK),
-                                         left=ft.BorderSide(width=1, color=ft.colors.BLACK)
-                        ),
         content=ft.Column(
             [
                 ft.Row([
-                    total_entrada,
-                    total_saida
+                    ft.Container(
+                        margin=10,
+                        padding=5,
+                        bgcolor=ft.colors.WHITE,
+                        border_radius=10,
+                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.BLUE_100, offset=ft.Offset(3,3)),
+                        content=total_entrada
+                    ),
+                    ft.Container(
+                        margin=10,
+                        padding=5,
+                        bgcolor=ft.colors.WHITE,
+                        border_radius=10,
+                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.RED_100, offset=ft.Offset(3,3)),
+                        content=total_saida
+                    ), 
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_AROUND),
-                ft.Divider(thickness=1, color=ft.colors.BLACK, opacity=0.5),
                 ft.Row(
                     [
-                        saldo_total,
+                        ft.Container(
+                        expand=True,
+                        margin=10,
+                        padding=5,
+                        bgcolor=ft.colors.WHITE,
+                        border_radius=10,
+                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.GREEN_100, offset=ft.Offset(3,3)),
+                        content=saldo_total
+                    ), 
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER),
-                ft.Divider(thickness=1, color=ft.colors.BLACK, opacity=0.5),
+                ft.Divider(height=5, thickness=3, color=ft.colors.BLACK26),
                 ft.Row(
                     [
                         ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=grafite),
