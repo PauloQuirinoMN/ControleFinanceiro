@@ -19,7 +19,7 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                ft.Text(value='Entradas', size=15, weight=ft.FontWeight.W_700, color=azul),
+                ft.Text(value='Entradas', size=18, weight=ft.FontWeight.BOLD, color=azul),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -33,7 +33,7 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                ft.Text(value='Saídas', size=15, weight=ft.FontWeight.W_700, color=vermelho),
+                ft.Text(value='Saídas', size=18, weight=ft.FontWeight.BOLD, color=vermelho),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER
@@ -46,8 +46,8 @@ def main(page: ft.Page):
         border_radius=5,
         content=ft.Row(
             [
-                ft.Text(value='Saldo Total', size=15, weight=ft.FontWeight.W_700, color=grafite),
-                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD, color=verde),
+                ft.Text(value='SALDO', size=20, weight=ft.FontWeight.BOLD, color=grafite),
+                ft.Text(value=0, size=25, weight=ft.FontWeight.BOLD, color=verde),
             ],
             alignment=ft.MainAxisAlignment.SPACE_EVENLY
         )
@@ -277,9 +277,9 @@ def main(page: ft.Page):
                     border_radius=0,
                     content=ft.Row(
                         [
-                            ft.Text(row[1], width=70, size=12, color=grafite, weight=ft.FontWeight.BOLD),
-                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=grafite, weight=ft.FontWeight.W_600),
-                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=grafite, weight=ft.FontWeight.W_600),
+                            ft.Text(row[1], width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
                         spacing=10,
@@ -404,23 +404,28 @@ def main(page: ft.Page):
         bgcolor=branco,
         border_radius=5,
         padding=5,
+        border=ft.Border(top=ft.BorderSide(width=1, color=ft.colors.BLACK),
+                                         right=ft.BorderSide(width=1, color=ft.colors.BLACK), 
+                                         bottom=ft.BorderSide(width=1, color=ft.colors.BLACK),
+                                         left=ft.BorderSide(width=1, color=ft.colors.BLACK)
+                        ),
         content=ft.Column(
             [
-                ft.Row([ft.Text(value='Saldos', size=20, weight=ft.FontWeight.BOLD, color=azul)], alignment=ft.MainAxisAlignment.START),
                 ft.Row([
                     total_entrada,
                     total_saida
                 ],
                 alignment=ft.MainAxisAlignment.SPACE_AROUND),
+                ft.Divider(thickness=1, color=ft.colors.BLACK, opacity=0.5),
                 ft.Row(
                     [
                         saldo_total,
                     ], 
                     alignment=ft.MainAxisAlignment.CENTER),
-                ft.Divider(),
+                ft.Divider(thickness=1, color=ft.colors.BLACK, opacity=0.5),
                 ft.Row(
                     [
-                        ft.Text(value='Transações', size=20, weight=ft.FontWeight.BOLD, color=azul),
+                        ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=grafite),
                         analise,
                         btn_limpardados,
                     ],
@@ -439,5 +444,5 @@ def main(page: ft.Page):
         layout,
         ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
     )
-if __name__ == "__,main__":
+if __name__ == "__main__":
     ft.app(target=main, view=ft.AppView.FLET_APP)
