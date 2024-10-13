@@ -394,9 +394,56 @@ def main(page: ft.Page):
     def remover_alerta(alerta):
         alerta.open = False
         page.update()
+    
+    def abrir_pg_analise(e):
+        page.clean()
+        page.add(pg_analise)
+        page.update()
+        
+    def fecha_pg(e):
+        page.clean()
+        page.add(
+        layout,
+        ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
+    )
+        page.update()
 
 
-    analise = ft.IconButton(icon=ft.icons.ANALYTICS, icon_color=verde, icon_size=25, disabled=True)
+
+    pg_analise = ft.Container(
+        expand=True,
+        bgcolor=ft.colors.BLACK,
+        padding=10,
+        content=ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.IconButton(icon=ft.icons.CLOSE, icon_color=ft.colors.WHITE, icon_size=20, on_click=fecha_pg),
+                    ],
+                    alignment=ft.MainAxisAlignment.END,
+                ),
+                ft.Text(value="PERÍODO", color=ft.colors.WHITE, size=25),
+                ft.Column(
+                    [
+                        ft.Row([
+                            ft.Text(value="De:  /  /  ", color=ft.colors.WHITE, size=20),
+                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        ft.Row([
+                            ft.Text(value="Até:  /  /  ", color=ft.colors.WHITE, size=20),
+                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                    ],
+
+                ),
+            ]
+        )
+    )
+
+
+    analise = ft.IconButton(icon=ft.icons.ANALYTICS, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
     btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
 
     layout = ft.Container(
