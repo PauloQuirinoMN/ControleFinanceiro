@@ -408,7 +408,80 @@ def main(page: ft.Page):
     )
         page.update()
 
+    labelde = ft.Text(value=f'De: __/__/__', size=15, color=ft.colors.WHITE)
+    labelate = ft.Text(value='Até: __/__/__', size=15, color=ft.colors.WHITE)
+    
 
+    def on_date_selected(e):
+        if e.control.value:
+            selected_date = e.control.value.strftime("%d/%m/%y")
+            if e.control.data == "from_date":
+                labelde.value = f"De: {selected_date}"
+                labelde.update()
+            elif e.control.data == "to_date":
+                labelate.value = f"Até: {selected_date}"
+                labelate.update()
+
+    datepicker_de = ft.DatePicker(
+        open=False,
+        data="from_date",
+        on_change=on_date_selected 
+    )
+
+    datepicker_ate = ft.DatePicker(
+        open=False,
+        data="to_date",
+        on_change=on_date_selected 
+    )
+
+    def abrir_date_de(e):
+        e.page.overlay.append(datepicker_de)
+        datepicker_de.open = True
+        e.page.update()
+
+    def abrir_date_ate(e):
+        e.page.overlay.append(datepicker_ate)
+        datepicker_ate.open = True
+        e.page.update()
+
+    qte = 0
+    qts = 0
+    qtt = qte + qts 
+
+    vle = 0
+    vls = 0
+    vlt = vle + vls
+
+
+    infor_geral = ft.Container(
+        margin=5,
+        padding=5,
+        content=ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.Text(value=f"{qte}. Entradas", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        ft.Text(value=f"R$ {vle:.2f}",weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value=f"{qts}. Saídas", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        ft.Text(value=f"R$ {vls:.2f}", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value=f"{qtt}. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        ft.Text(value=f"R$ {vlt:.2f}", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+            ]
+        )
+    )
 
     pg_analise = ft.Container(
         expand=True,
@@ -422,22 +495,19 @@ def main(page: ft.Page):
                     ],
                     alignment=ft.MainAxisAlignment.END,
                 ),
-                ft.Text(value="PERÍODO", color=ft.colors.WHITE, size=25),
+                ft.Text(value="Período", color=ft.colors.WHITE, size=18, weight=ft.FontWeight.BOLD),
                 ft.Column(
                     [
                         ft.Row([
-                            ft.Text(value="De:  /  /  ", color=ft.colors.WHITE, size=20),
-                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE),
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
-                        ft.Row([
-                            ft.Text(value="Até:  /  /  ", color=ft.colors.WHITE, size=20),
-                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE),
+                            labelde,
+                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_de),
+                            labelate,
+                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_ate)
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                     ],
-
                 ),
+                infor_geral
             ]
         )
     )
