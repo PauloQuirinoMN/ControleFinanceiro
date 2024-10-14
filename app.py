@@ -483,6 +483,181 @@ def main(page: ft.Page):
         )
     )
 
+    filtro_tipo = ft.Container(
+        border_radius=10,
+        bgcolor=ft.colors.WHITE10,
+        content=ft.Row(
+            [
+                ft.Container(
+                    on_click=lambda x: print(''),
+                    height=35,
+                    width=35,
+                    bgcolor=ft.colors.BLUE,
+                    shape=ft.BoxShape.CIRCLE,
+                    content=ft.Text(value="E", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.BLUE_50, text_align=ft.TextAlign.CENTER),
+                ),
+                ft.Container(
+                    on_click=lambda x: print(''),
+                    height=35,
+                    width=35,
+                    bgcolor=ft.colors.RED,
+                    shape=ft.BoxShape.CIRCLE,
+                    content=ft.Text(value="S", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.RED_50, text_align=ft.TextAlign.CENTER),
+                ),
+                ft.Container(
+                    on_click=lambda x: print(''),
+                    height=35,
+                    width=35,
+                    bgcolor=ft.colors.GREEN,
+                    shape=ft.BoxShape.CIRCLE,
+                    content=ft.Text(value="T", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.GREEN_50, text_align=ft.TextAlign.CENTER),
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_AROUND
+        )
+    )
+
+    barras_forma = ft.Container(
+        content=ft.BarChart(
+            bar_groups=[
+                ft.BarChartGroup(
+                    x=0,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=40,
+                            width=20,
+                        ),
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=30,
+                            width=20,
+                        ),
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=20,
+                            width=20,
+                        ),
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=10,
+                            width=20,
+                        ),
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=2,
+                            width=20,
+                        ),
+                    ],
+                    bars_space=15,
+                )
+            ]
+        )
+    )
+
+    pizza_forma = ft.Container(
+        expand=True,
+        content=ft.PieChart(
+            center_space_radius=15,
+            sections=[
+                ft.PieChartSection(
+                    value=40,
+                    title="40%",
+                    radius=50,
+                    title_position=0.7,
+                ),
+                ft.PieChartSection(
+                    value=30,
+                    title="30%",
+                    radius=50,
+                    title_position=0.7,
+                    ),
+                ft.PieChartSection(
+                    value=20,
+                    title="20%",
+                    radius=50,
+                    title_position=0.7,
+                ),
+                ft.PieChartSection(
+                    value=10,
+                    title="10%",
+                    radius=50,
+                    title_position=0.7,
+                ),
+                ft.PieChartSection(
+                    value=2,
+                    title="2%",
+                    radius=50,
+                    title_position=0.7,
+                ),
+            ],
+
+        )
+    )
+    real_forma = ft.Container(
+        content=ft.Column(
+            [
+                ft.Row(
+                    [
+                        ft.Text(value="Salário", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value="Entrada 2", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value="Três", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value="Quatro", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+                ft.Row(
+                    [
+                        ft.Text(value="Cinco", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+        )
+    )
+    desc_porc_real = ft.Container()
+
+
+    painel = ft.Container(
+
+        content=ft.Column(
+            [
+                barras_forma, 
+                ft.Row(
+                    [
+                        pizza_forma,
+                        real_forma
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND
+                ),
+                desc_porc_real
+            ],
+            scroll=ft.ScrollMode.AUTO,
+        ),
+        expand=True,
+    )
+
     pg_analise = ft.Container(
         expand=True,
         bgcolor=ft.colors.BLACK,
@@ -507,7 +682,9 @@ def main(page: ft.Page):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                     ],
                 ),
-                infor_geral
+                infor_geral,
+                filtro_tipo,
+                painel,
             ]
         )
     )
