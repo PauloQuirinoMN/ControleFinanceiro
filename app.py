@@ -2,6 +2,9 @@ import flet as ft
 import openpyxl # Manipular Excel
 import os # Acessa documentos através do sistema operacinal
 from datetime import datetime # Capturar informações de data e hora
+import pandas as pd
+
+
 
 def main(page: ft.Page):
 
@@ -118,6 +121,8 @@ def main(page: ft.Page):
             scroll=ft.ScrollMode.AUTO
         )
     )
+
+    
 
     # adicionar o alerta ao overlay
     def adicionar_alerta(alerta):
@@ -408,19 +413,23 @@ def main(page: ft.Page):
     )
         page.update()
 
-    labelde = ft.Text(value=f'De: __/__/__', size=15, color=ft.colors.WHITE)
-    labelate = ft.Text(value='Até: __/__/__', size=15, color=ft.colors.WHITE)
+    
+    
+    data_inicial = ft.Text(value=f'De: __/__/__', size=15, color=ft.colors.WHITE)
+    data_final = ft.Text(value='Até: __/__/__', size=15, color=ft.colors.WHITE)
+
+
     
 
     def on_date_selected(e):
         if e.control.value:
             selected_date = e.control.value.strftime("%d/%m/%y")
             if e.control.data == "from_date":
-                labelde.value = f"De: {selected_date}"
-                labelde.update()
+                data_inicial.value = f"De: {selected_date}"
+                data_inicial.update()
             elif e.control.data == "to_date":
-                labelate.value = f"Até: {selected_date}"
-                labelate.update()
+                data_final.value = f"Até: {selected_date}"
+                data_final.update()
 
     datepicker_de = ft.DatePicker(
         open=False,
@@ -444,6 +453,7 @@ def main(page: ft.Page):
         datepicker_ate.open = True
         e.page.update()
 
+
     qte = 0
     qts = 0
     qtt = qte + qts 
@@ -451,6 +461,8 @@ def main(page: ft.Page):
     vle = 0
     vls = 0
     vlt = vle + vls
+
+   
 
 
     infor_geral = ft.Container(
@@ -658,6 +670,8 @@ def main(page: ft.Page):
         expand=True,
     )
 
+
+
     pg_analise = ft.Container(
         expand=True,
         bgcolor=ft.colors.BLACK,
@@ -674,9 +688,9 @@ def main(page: ft.Page):
                 ft.Column(
                     [
                         ft.Row([
-                            labelde,
+                            data_inicial,
                             ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_de),
-                            labelate,
+                            data_final,
                             ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_ate)
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
