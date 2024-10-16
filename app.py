@@ -122,7 +122,6 @@ def main(page: ft.Page):
         )
     )
 
-    
 
     # adicionar o alerta ao overlay
     def adicionar_alerta(alerta):
@@ -415,11 +414,9 @@ def main(page: ft.Page):
 
     
     
-    data_inicial = ft.Text(value=f'De: __/__/__', size=15, color=ft.colors.WHITE)
-    data_final = ft.Text(value='Até: __/__/__', size=15, color=ft.colors.WHITE)
+    data_inicial = ft.Text(value=0, size=15, color=ft.colors.WHITE)
+    data_final = ft.Text(value=0, size=15, color=ft.colors.WHITE)
 
-
-    
 
     def on_date_selected(e):
         if e.control.value:
@@ -430,6 +427,20 @@ def main(page: ft.Page):
             elif e.control.data == "to_date":
                 data_final.value = f"Até: {selected_date}"
                 data_final.update()
+
+        
+    def operacao_datas(data_inicial, data_final):
+
+        data_inicial = pd.to_datetime(data_inicial.value)
+        data_final = pd.to_datetime(data_final.value)
+    
+        return data_inicial, data_final
+
+    data_inicial_mod, data_final_mod = operacao_datas(data_inicial, data_inicial)
+    print(data_inicial_mod)
+    print(type(data_inicial_mod))
+
+
 
     datepicker_de = ft.DatePicker(
         open=False,
@@ -516,20 +527,15 @@ def main(page: ft.Page):
                     shape=ft.BoxShape.CIRCLE,
                     content=ft.Text(value="S", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.RED_50, text_align=ft.TextAlign.CENTER),
                 ),
-                ft.Container(
-                    on_click=lambda x: print(''),
-                    height=35,
-                    width=35,
-                    bgcolor=ft.colors.GREEN,
-                    shape=ft.BoxShape.CIRCLE,
-                    content=ft.Text(value="T", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.GREEN_50, text_align=ft.TextAlign.CENTER),
-                ),
             ],
             alignment=ft.MainAxisAlignment.SPACE_AROUND
         )
     )
 
     barras_forma = ft.Container(
+        expand=True,
+        height=150,
+        #bgcolor=ft.colors.AMBER_500,
         content=ft.BarChart(
             bar_groups=[
                 ft.BarChartGroup(
@@ -567,16 +573,22 @@ def main(page: ft.Page):
         )
     )
 
+    lista=['Pix', 'Dinheiro', 'Outros', 'Fiado', 'Cartão']
+    porcentagem_forma = ['40', '30', '20', '10', '2']
+
     pizza_forma = ft.Container(
         expand=True,
+        height=120,
+        width=100,
+        #bgcolor=ft.colors.AMBER_100,
         content=ft.PieChart(
             center_space_radius=15,
             sections=[
                 ft.PieChartSection(
                     value=40,
-                    title="40%",
+                    title=f"{lista[0]} {porcentagem_forma[0]} %",
                     radius=50,
-                    title_position=0.7,
+                    title_position=0.5,
                 ),
                 ft.PieChartSection(
                     value=30,
@@ -611,36 +623,36 @@ def main(page: ft.Page):
             [
                 ft.Row(
                     [
-                        ft.Text(value="Salário", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                        ft.Text(value="Pix...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
+                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value="Entrada 2", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                        ft.Text(value="Dinheiro...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
+                        ft.Text(value="1200.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value="Três", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                        ft.Text(value="Outros...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
+                        ft.Text(value="600.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value="Quatro", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                        ft.Text(value="Fiado...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
+                        ft.Text(value="200.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value="Cinco", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.BOLD)
+                        ft.Text(value="Cartão...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
+                        ft.Text(value="0.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
@@ -648,14 +660,55 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
-    desc_porc_real = ft.Container()
+
+
+    desc_porc_real = ft.Container(
+        expand=True,
+        padding=10,
+        margin=5,
+        border_radius=10,
+        content=ft.Column(
+            [
+                ft.Container(
+                    padding=15,
+                    margin=5,
+                    bgcolor=ft.colors.CYAN,
+                    border_radius=10,
+                    height=50,
+                    content=ft.Row(
+                        [
+                            ft.Text(value='25 x Padaria', color=ft.colors.BLACK, size=12),
+                            ft.Text(value='12 %', color=ft.colors.BLACK, size=12),
+                            ft.Text(value='250.00 R$'),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                    )
+                ),
+                ft.Container(
+                    padding=15,
+                    margin=5,
+                    bgcolor=ft.colors.CYAN,
+                    border_radius=10,
+                    height=50,
+                    content=ft.Row(
+                        [
+                            ft.Text(value='45 x Uber', color=ft.colors.BLACK, size=12),
+                            ft.Text(value='29 %', color=ft.colors.BLACK, size=12),
+                            ft.Text(value='650.00 R$'),
+                        ],
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                    )
+                ),
+            ]
+        ),
+    )
 
 
     painel = ft.Container(
 
         content=ft.Column(
-            [
-                barras_forma, 
+            [ 
+                ft.Text(value='Formas de Transações', color=ft.colors.WHITE, size=18, italic=True),
                 ft.Row(
                     [
                         pizza_forma,
@@ -663,7 +716,11 @@ def main(page: ft.Page):
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND
                 ),
+                ft.Text(value='Categorias das Transações', color=ft.colors.WHITE, size=18, italic=True),
+                barras_forma,
+                ft.Text(value='Sobre as Transações', color=ft.colors.WHITE, size=18, italic=True),
                 desc_porc_real
+
             ],
             scroll=ft.ScrollMode.AUTO,
         ),
