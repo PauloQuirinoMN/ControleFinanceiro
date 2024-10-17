@@ -8,7 +8,6 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-  
     branco = "#F4F5F0"
     azul = "#4895EF"
     verde = "#75975e"
@@ -417,30 +416,81 @@ def main(page: ft.Page):
     data_inicial = ft.Text(value=0, size=15, color=ft.colors.WHITE)
     data_final = ft.Text(value=0, size=15, color=ft.colors.WHITE)
 
+    # Variáveis que vão armazenar os objetos datetime
+    data_inicial_datetime = None
+    data_final_datetime = None
+
+    def calcular_totais(df_filtrado):
+        # Filtra todas as transações do tipo "Entrada"
+        entradas = df_filtrado[df_filtrado['Tipo'] == 'Entrada']
+        soma_entradas = entradas['Valor'].sum()
+        qtd_entradas = len(entradas)
+
+        # Filtra todas as transações do tipo "Saída"
+        saidas = df_filtrado[df_filtrado['Tipo'] == 'Saída']
+        soma_saidas = saidas['Valor'].sum()
+        qtd_saidas = len(saidas)
+
+    # Total geral de transações
+        total_transacoes = soma_entradas + soma_saidas
+        qtd_transacoes = qtd_entradas + qtd_saidas
+
+    # Retornar os resultados
+        return {
+            'total_entradas': soma_entradas,
+            'qtd_entradas': qtd_entradas,
+            'total_saidas': soma_saidas,
+            'qtd_saidas': qtd_saidas,
+            'total_transacoes': total_transacoes,
+            'qtd_transacoes': qtd_transacoes
+        }
 
     def on_date_selected(e):
+
+        global data_inicial_datetime, data_final_datetime
+
         if e.control.value:
-            selected_date = e.control.value.strftime("%d/%m/%y")
+            selected_date = e.control.value
+
+            data_formatada = selected_date.strftime("%d/%m/%y")
             if e.control.data == "from_date":
-                data_inicial.value = f"De: {selected_date}"
+                data_inicial.value = f"De: {data_formatada}"
+                data_inicial_datetime = selected_date
                 data_inicial.update()
             elif e.control.data == "to_date":
-                data_final.value = f"Até: {selected_date}"
+                data_final.value = f"Até: {data_formatada}"
+                data_final_datetime = selected_date
                 data_final.update()
 
-        
-    def operacao_datas(data_inicial, data_final):
+        # Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
+        if data_inicial_datetime and data_final_datetime:
 
-        data_inicial = pd.to_datetime(data_inicial.value)
-        data_final = pd.to_datetime(data_final.value)
+            df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
+            resultados = calcular_totais(df_filtrados)
+
+
+            # Usando os resultados nas variáveis
+            quantidade_entrada.value = f"{resultados['qtd_entradas']}. Entradas"
+            valor_entrada.value = f"{resultados['total_entradas']}     R$"
+            quantidade_saida.value = f"{resultados['qtd_saidas']}. Saídas"
+            valor_saida.value = f"{resultados['total_saidas']}     R$"
+            quantidade_transacoes.value = f"{resultados['qtd_transacoes']}. Transações"
+            valor_transacoes.value = f"{resultados['total_transacoes']}     R$"
+            page.update()
+
     
-        return data_inicial, data_final
+    # Função que usa os objetos datetime
+    def filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime):
+    # Carrega o arquivo Excel
+        df = pd.read_excel("transacoes.xlsx")
 
-    data_inicial_mod, data_final_mod = operacao_datas(data_inicial, data_inicial)
-    print(data_inicial_mod)
-    print(type(data_inicial_mod))
+    # Criar a coluna de data no formato datetime
+        df['Data'] = pd.to_datetime(df[['Ano', 'Mês', 'Dia']].rename(columns={'Ano': 'year', 'Mês': 'month', 'Dia': 'day'}))
 
+    # Filtrar o dataframe pelo período selecionado
+        df_filtrado = df[(df['Data'] >= data_inicial_datetime) & (df['Data'] <= data_final_datetime)]
 
+        return df_filtrado
 
     datepicker_de = ft.DatePicker(
         open=False,
@@ -464,16 +514,12 @@ def main(page: ft.Page):
         datepicker_ate.open = True
         e.page.update()
 
-
-    qte = 0
-    qts = 0
-    qtt = qte + qts 
-
-    vle = 0
-    vls = 0
-    vlt = vle + vls
-
-   
+    quantidade_entrada = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_entrada = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_saida = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_saida = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_transacoes = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_transacoes = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
 
 
     infor_geral = ft.Container(
@@ -483,22 +529,22 @@ def main(page: ft.Page):
             [
                 ft.Row(
                     [
-                        ft.Text(value=f"{qte}. Entradas", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
-                        ft.Text(value=f"R$ {vle:.2f}",weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        quantidade_entrada,                      
+                        valor_entrada,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value=f"{qts}. Saídas", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
-                        ft.Text(value=f"R$ {vls:.2f}", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        quantidade_saida,
+                        valor_saida,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
                 ft.Row(
                     [
-                        ft.Text(value=f"{qtt}. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
-                        ft.Text(value=f"R$ {vlt:.2f}", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE),
+                        quantidade_transacoes,
+                        valor_transacoes,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                 ),
@@ -535,7 +581,6 @@ def main(page: ft.Page):
     barras_forma = ft.Container(
         expand=True,
         height=150,
-        #bgcolor=ft.colors.AMBER_500,
         content=ft.BarChart(
             bar_groups=[
                 ft.BarChartGroup(
