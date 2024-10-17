@@ -416,10 +416,6 @@ def main(page: ft.Page):
     data_inicial = ft.Text(value=0, size=15, color=ft.colors.WHITE)
     data_final = ft.Text(value=0, size=15, color=ft.colors.WHITE)
 
-    # Variáveis que vão armazenar os objetos datetime
-    data_inicial_datetime = None
-    data_final_datetime = None
-
     def calcular_totais(df_filtrado):
         # Filtra todas as transações do tipo "Entrada"
         entradas = df_filtrado[df_filtrado['Tipo'] == 'Entrada']
@@ -444,6 +440,11 @@ def main(page: ft.Page):
             'total_transacoes': total_transacoes,
             'qtd_transacoes': qtd_transacoes
         }
+    
+
+    # Inicializando as variáveis globais com None
+    data_inicial_datetime = None
+    data_final_datetime = None
 
     def on_date_selected(e):
 
@@ -462,22 +463,29 @@ def main(page: ft.Page):
                 data_final_datetime = selected_date
                 data_final.update()
 
-        # Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
-        if data_inicial_datetime and data_final_datetime:
+# Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
 
-            df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
-            resultados = calcular_totais(df_filtrados)
+        while True:
+
+            # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente)
+            if data_inicial_datetime and data_final_datetime:
+                
+                df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
+                resultados = calcular_totais(df_filtrados)
 
 
-            # Usando os resultados nas variáveis
-            quantidade_entrada.value = f"{resultados['qtd_entradas']}. Entradas"
-            valor_entrada.value = f"{resultados['total_entradas']}     R$"
-            quantidade_saida.value = f"{resultados['qtd_saidas']}. Saídas"
-            valor_saida.value = f"{resultados['total_saidas']}     R$"
-            quantidade_transacoes.value = f"{resultados['qtd_transacoes']}. Transações"
-            valor_transacoes.value = f"{resultados['total_transacoes']}     R$"
-            page.update()
+                # Usando os resultados nas variáveis
+                quantidade_entrada.value = f"{resultados['qtd_entradas']}. Entradas"
+                valor_entrada.value = f"R$      {resultados['total_entradas']:.2f}"
+                quantidade_saida.value = f"{resultados['qtd_saidas']}. Saídas"
+                valor_saida.value = f"R$      {resultados['total_saidas']:.2f}"
+                quantidade_transacoes.value = f"{resultados['qtd_transacoes']}. Transações"
+                valor_transacoes.value = f"R$      {resultados['total_transacoes']:.2f}"
+                page.update()
+            else:
+                return
 
+    page.update()
     
     # Função que usa os objetos datetime
     def filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime):
@@ -514,12 +522,12 @@ def main(page: ft.Page):
         datepicker_ate.open = True
         e.page.update()
 
-    quantidade_entrada = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_entrada = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    quantidade_saida = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_saida = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    quantidade_transacoes = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_transacoes = ft.Text(value="", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_entrada = ft.Text(value="0. Entrada", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_entrada = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_saida = ft.Text(value="0. Saída", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_saida = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_transacoes = ft.Text(value="0. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    valor_transacoes = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
 
 
     infor_geral = ft.Container(
