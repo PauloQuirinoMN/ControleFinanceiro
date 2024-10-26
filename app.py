@@ -15,12 +15,13 @@ def main(page: ft.Page):
     vermelho = '#ee6b6e'
 
     total_entrada = ft.Container(
+        bgcolor=ft.colors.BLACK87,
         border_radius=5,
         height=60,
         width=120,
         content=ft.Column(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
                 ft.Text(value='Entradas', size=18, weight=ft.FontWeight.BOLD, color=azul),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -29,12 +30,13 @@ def main(page: ft.Page):
     )
 
     total_saida = ft.Container(
+        bgcolor=ft.colors.TRANSPARENT,
         border_radius=5,
         height=60,
         width=120,
         content=ft.Column(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=grafite),
+                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
                 ft.Text(value='Saídas', size=18, weight=ft.FontWeight.BOLD, color=vermelho),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -280,9 +282,9 @@ def main(page: ft.Page):
                     border_radius=0,
                     content=ft.Row(
                         [
-                            ft.Text(row[1], width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
-                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
-                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=ft.colors.BLACK, weight=ft.FontWeight.W_600),
+                            ft.Text(row[1], width=70, size=12, color=ft.colors.WHITE, weight=ft.FontWeight.W_600),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=12, color=ft.colors.WHITE, weight=ft.FontWeight.W_600),
+                            ft.Text(f"R$ {row[3]}", width=70, size=12, color=ft.colors.WHITE, weight=ft.FontWeight.W_600),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
                         spacing=10,
@@ -450,25 +452,23 @@ def main(page: ft.Page):
 
         global data_inicial_datetime, data_final_datetime
 
-        if e.control.value:
-            selected_date = e.control.value
+        selected_date = e.control.value
 
-            data_formatada = selected_date.strftime("%d/%m/%y")
-            if e.control.data == "from_date":
-                data_inicial.value = f"De: {data_formatada}"
-                data_inicial_datetime = selected_date
-                data_inicial.update()
-            elif e.control.data == "to_date":
-                data_final.value = f"Até: {data_formatada}"
-                data_final_datetime = selected_date
-                data_final.update()
+        data_formatada = selected_date.strftime("%d/%m/%y")
+        if e.control.data == "from_date":
+            data_inicial.value = f"De: {data_formatada}"
+            data_inicial_datetime = selected_date
+            data_inicial.update()
+        elif e.control.data == "to_date":
+            data_final.value = f"Até: {data_formatada}"
+            data_final_datetime = selected_date
+            data_final.update()
 
 # Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
 
-        while True:
-
-            # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente)
-            if data_inicial_datetime and data_final_datetime:
+        # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente)
+       
+            while data_inicial_datetime is not None and data_final_datetime is not None:
                 
                 df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
                 resultados = calcular_totais(df_filtrados)
@@ -482,11 +482,54 @@ def main(page: ft.Page):
                 quantidade_transacoes.value = f"{resultados['qtd_transacoes']}. Transações"
                 valor_transacoes.value = f"R$      {resultados['total_transacoes']:.2f}"
                 page.update()
+                return resultados
             else:
                 return
-
-    page.update()
     
+
+    #Aqui começa o tratamento para exibir informações sobre das transações e seus valores
+    # dentro do período selecionado e filtrado por entrada ou saída
+    def filtrando_tipo(e):
+        global data_inicial_datetime, data_final_datetime
+        tipo = e.control.data 
+        # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente
+        if data_inicial_datetime is not None and data_final_datetime is not None:
+            df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
+            if tipo == 'E':
+                df_entradas = df[df['Tipo'] == 'Entrada']
+                df_entradas_processado = processa_dados(df_entradas)
+                return df_entradas_processado
+            elif tipo == 'S':
+                df_saidas = df[df['Tipo'] == 'Saída']
+                df_saidas_processado = processa_dados(df_saidas)
+                return df_saidas_processado
+        else:
+            return
+    trasacoes_detalhadas = []
+        
+    def processa_dados(df):
+        # 1º calcular o valor total
+        total_valor = df['Valor'].sum()
+        # 2. Agrupe o DataFrame por 'Descrição' para calcular a quantidade e o valor total de cada grupo
+        agrupamento = df.groupby('Descrição').agg(
+            quantidade=('Valor', 'size'),        # Conta quantas vezes a descrição aparece
+            valor_total=('Valor', 'sum')         # Soma os valores para cada descrição
+        ).reset_index()  # Convertemos para um DataFrame padrão após o agrupamento    
+        # 3. Calcule a porcentagem de cada descrição em relação ao total do período selecionado
+        agrupamento['percentual'] = (agrupamento['valor_total'] / total_valor * 100).round(2)
+
+        print(agrupamento)
+
+
+    desc_porc_real = ft.Container(
+        expand=True,
+        padding=10,
+        margin=5,
+        border_radius=10,
+        content=ft.Column([]),
+    )
+
+
     # Função que usa os objetos datetime
     def filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime):
     # Carrega o arquivo Excel
@@ -560,13 +603,16 @@ def main(page: ft.Page):
         )
     )
 
+
+
     filtro_tipo = ft.Container(
         border_radius=10,
         bgcolor=ft.colors.WHITE10,
         content=ft.Row(
             [
                 ft.Container(
-                    on_click=lambda x: print(''),
+                    data='E',
+                    on_click=filtrando_tipo,
                     height=35,
                     width=35,
                     bgcolor=ft.colors.BLUE,
@@ -574,7 +620,8 @@ def main(page: ft.Page):
                     content=ft.Text(value="E", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.BLUE_50, text_align=ft.TextAlign.CENTER),
                 ),
                 ft.Container(
-                    on_click=lambda x: print(''),
+                    data='S',
+                    on_click=filtrando_tipo,
                     height=35,
                     width=35,
                     bgcolor=ft.colors.RED,
@@ -643,32 +690,7 @@ def main(page: ft.Page):
                     radius=50,
                     title_position=0.5,
                 ),
-                ft.PieChartSection(
-                    value=30,
-                    title="30%",
-                    radius=50,
-                    title_position=0.7,
-                    ),
-                ft.PieChartSection(
-                    value=20,
-                    title="20%",
-                    radius=50,
-                    title_position=0.7,
-                ),
-                ft.PieChartSection(
-                    value=10,
-                    title="10%",
-                    radius=50,
-                    title_position=0.7,
-                ),
-                ft.PieChartSection(
-                    value=2,
-                    title="2%",
-                    radius=50,
-                    title_position=0.7,
-                ),
             ],
-
         )
     )
     real_forma = ft.Container(
@@ -713,49 +735,7 @@ def main(page: ft.Page):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN
         )
     )
-
-
-    desc_porc_real = ft.Container(
-        expand=True,
-        padding=10,
-        margin=5,
-        border_radius=10,
-        content=ft.Column(
-            [
-                ft.Container(
-                    padding=15,
-                    margin=5,
-                    bgcolor=ft.colors.CYAN,
-                    border_radius=10,
-                    height=50,
-                    content=ft.Row(
-                        [
-                            ft.Text(value='25 x Padaria', color=ft.colors.BLACK, size=12),
-                            ft.Text(value='12 %', color=ft.colors.BLACK, size=12),
-                            ft.Text(value='250.00 R$'),
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                    )
-                ),
-                ft.Container(
-                    padding=15,
-                    margin=5,
-                    bgcolor=ft.colors.CYAN,
-                    border_radius=10,
-                    height=50,
-                    content=ft.Row(
-                        [
-                            ft.Text(value='45 x Uber', color=ft.colors.BLACK, size=12),
-                            ft.Text(value='29 %', color=ft.colors.BLACK, size=12),
-                            ft.Text(value='650.00 R$'),
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                    )
-                ),
-            ]
-        ),
-    )
-
+        
 
     painel = ft.Container(
 
@@ -819,7 +799,7 @@ def main(page: ft.Page):
 
     layout = ft.Container(
         expand=True,
-        bgcolor=branco,
+        bgcolor=ft.colors.BLACK,
         border_radius=5,
         padding=5,
         content=ft.Column(
@@ -828,17 +808,17 @@ def main(page: ft.Page):
                     ft.Container(
                         margin=10,
                         padding=5,
-                        bgcolor=ft.colors.WHITE,
+                        bgcolor=ft.colors.BLACK,
                         border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.BLUE_100, offset=ft.Offset(3,3)),
+                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.BLUE_100, offset=ft.Offset(0,0)),
                         content=total_entrada
                     ),
                     ft.Container(
                         margin=10,
                         padding=5,
-                        bgcolor=ft.colors.WHITE,
+                        bgcolor=ft.colors.BLACK,
                         border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.RED_100, offset=ft.Offset(3,3)),
+                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.RED_100, offset=ft.Offset(0,0)),
                         content=total_saida
                     ), 
                 ],
@@ -847,11 +827,11 @@ def main(page: ft.Page):
                     [
                         ft.Container(
                         expand=True,
-                        margin=10,
+                        margin=15,
                         padding=5,
-                        bgcolor=ft.colors.WHITE,
+                        bgcolor=ft.colors.BLACK,
                         border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=2, blur_radius=8, color=ft.colors.GREEN_100, offset=ft.Offset(3,3)),
+                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.GREEN_100, offset=ft.Offset(0,0)),
                         content=saldo_total
                     ), 
                     ], 
