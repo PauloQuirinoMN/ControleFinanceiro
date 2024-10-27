@@ -8,11 +8,21 @@ import pandas as pd
 
 def main(page: ft.Page):
 
+    trasacoes_detalhadas = []
+
     branco = "#F4F5F0"
     azul = "#4895EF"
     verde = "#75975e"
     grafite = '#747169'
     vermelho = '#ee6b6e'
+
+    desc_porc_real = ft.Container(
+        expand=True,
+        padding=10,
+        margin=5,
+        border_radius=10,
+        content=ft.Column([]),
+    )
 
     total_entrada = ft.Container(
         bgcolor=ft.colors.BLACK87,
@@ -473,7 +483,6 @@ def main(page: ft.Page):
                 df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
                 resultados = calcular_totais(df_filtrados)
 
-
                 # Usando os resultados nas variáveis
                 quantidade_entrada.value = f"{resultados['qtd_entradas']}. Entradas"
                 valor_entrada.value = f"R$      {resultados['total_entradas']:.2f}"
@@ -505,9 +514,10 @@ def main(page: ft.Page):
                 return df_saidas_processado
         else:
             return
-    trasacoes_detalhadas = []
+    
         
     def processa_dados(df):
+
         # 1º calcular o valor total
         total_valor = df['Valor'].sum()
         # 2. Agrupe o DataFrame por 'Descrição' para calcular a quantidade e o valor total de cada grupo
@@ -518,16 +528,13 @@ def main(page: ft.Page):
         # 3. Calcule a porcentagem de cada descrição em relação ao total do período selecionado
         agrupamento['percentual'] = (agrupamento['valor_total'] / total_valor * 100).round(2)
 
-        print(agrupamento)
+        def listas_dados_processado(df):
+            lista_processada = df.values.tolist()
+            return lista_processada
 
+        listas_processadas = listas_dados_processado(agrupamento)
+        print(listas_processadas)
 
-    desc_porc_real = ft.Container(
-        expand=True,
-        padding=10,
-        margin=5,
-        border_radius=10,
-        content=ft.Column([]),
-    )
 
 
     # Função que usa os objetos datetime
