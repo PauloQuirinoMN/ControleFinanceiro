@@ -8,8 +8,6 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-    trasacoes_detalhadas = []
-
     branco = "#F4F5F0"
     azul = "#4895EF"
     verde = "#75975e"
@@ -474,10 +472,8 @@ def main(page: ft.Page):
             data_final_datetime = selected_date
             data_final.update()
 
-# Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
-
+        # Chamar a função de filtragem apenas quando ambas as datas forem selecionadas
         # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente)
-       
             while data_inicial_datetime is not None and data_final_datetime is not None:
                 
                 df_filtrados = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
@@ -514,8 +510,9 @@ def main(page: ft.Page):
                 return df_saidas_processado
         else:
             return
+
+    lista_trasacoes = []
     
-        
     def processa_dados(df):
 
         # 1º calcular o valor total
@@ -529,12 +526,24 @@ def main(page: ft.Page):
         agrupamento['percentual'] = (agrupamento['valor_total'] / total_valor * 100).round(2)
 
         def listas_dados_processado(df):
+            global lista_trasacoes 
+
             lista_processada = df.values.tolist()
+            lista_trasacoes = lista_processada
             return lista_processada
 
         listas_processadas = listas_dados_processado(agrupamento)
-        print(listas_processadas)
 
+        desc_porc_real.content.controls.clear()
+
+        for i in listas_processadas:
+            trasa_text = f"{i[1]} x {i[0]}  R${i[2]:.2f}  total de {i[3]} %"
+            u = ft.Row([ft.Text(trasa_text, style=ft.TextStyle(size=13, color=ft.colors.WHITE))])
+            # Adiciona a linha ao container desc_porc_real
+            desc_porc_real.content.controls.append(u)
+        # Atualiza o container para exibir as novas linhas
+        desc_porc_real.update()
+        
 
 
     # Função que usa os objetos datetime
