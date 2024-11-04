@@ -8,7 +8,7 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-    branco = "#F4F5F0"
+    preto = '#3D3D3D'
     azul = "#4895EF"
     verde = "#75975e"
     grafite = '#747169'
@@ -23,17 +23,15 @@ def main(page: ft.Page):
     )
 
     total_entrada = ft.Container(
-        bgcolor=ft.colors.BLACK87,
         border_radius=5,
         height=60,
         width=120,
-        content=ft.Column(
+        content=ft.Row(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                ft.Text(value='Entradas', size=18, weight=ft.FontWeight.BOLD, color=azul),
+                ft.Icon(name=ft.icons.NORTH, color=verde),
+                ft.Text(value=0, size=15, weight=ft.FontWeight.BOLD, color=verde),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
@@ -42,13 +40,12 @@ def main(page: ft.Page):
         border_radius=5,
         height=60,
         width=120,
-        content=ft.Column(
+        content=ft.Row(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                ft.Text(value='Saídas', size=18, weight=ft.FontWeight.BOLD, color=vermelho),
+                ft.Icon(name=ft.icons.SOUTH, color=vermelho),
+                ft.Text(value=0, size=15, weight=ft.FontWeight.BOLD, color=verde),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
@@ -58,8 +55,7 @@ def main(page: ft.Page):
         border_radius=5,
         content=ft.Row(
             [
-                ft.Text(value='SALDO', size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                ft.Text(value=0, size=25, weight=ft.FontWeight.BOLD, color=verde),
+                ft.Text(value=0, size=25, weight=ft.FontWeight.BOLD, color=verde)
             ],
             alignment=ft.MainAxisAlignment.SPACE_EVENLY
         )
@@ -327,9 +323,9 @@ def main(page: ft.Page):
                 sa += valor
         to = en - sa
 
-        total_entrada.content.controls[0].value = f"R$ {en:.2f}"
-        total_saida.content.controls[0].value = f"R$ {sa:.2f}"
-        saldo_total.content.controls[1].value =  f"R$ {to:.2f}"
+        total_entrada.content.controls[1].value = f"R$ {en:.2f}"
+        total_saida.content.controls[1].value = f"R$ {sa:.2f}"
+        saldo_total.content.controls[0].value =  f"R$ {to:.2f}"
 
         page.update()
 
@@ -780,7 +776,7 @@ def main(page: ft.Page):
 
     pg_analise = ft.Container(
         expand=True,
-        bgcolor=ft.colors.BLACK,
+        bgcolor=preto,
         padding=10,
         content=ft.Column(
             [
@@ -813,50 +809,40 @@ def main(page: ft.Page):
     analise = ft.IconButton(icon=ft.icons.ANALYTICS, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
     btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
 
+    
+    b = '#00FF7F' 
+    c = '#ADFF2F'
+    d = '#FFC300' 
+
+    
+
     layout = ft.Container(
         expand=True,
-        bgcolor=ft.colors.BLACK,
+        bgcolor=preto,
         border_radius=5,
         padding=5,
         content=ft.Column(
             [
-                ft.Row([
-                    ft.Container(
-                        margin=10,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.BLUE_100, offset=ft.Offset(0,0)),
-                        content=total_entrada
+                ft.Row([analise], alignment=ft.MainAxisAlignment.END),
+                ft.Container(
+                    margin=15,
+                    border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+                    gradient=ft.LinearGradient(
+                        colors=[
+                        b, c, d
+                        ]
                     ),
-                    ft.Container(
-                        margin=10,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.RED_100, offset=ft.Offset(0,0)),
-                        content=total_saida
-                    ), 
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_AROUND),
+                    border_radius=10,
+                    content=ft.Column(
+                        [
+                            ft.Row([saldo_total], alignment=ft.MainAxisAlignment.END),
+                            ft.Row([total_entrada, total_saida], alignment=ft.MainAxisAlignment.CENTER, expand=True),
+                        ]
+                    )
+                ),
                 ft.Row(
                     [
-                        ft.Container(
-                        expand=True,
-                        margin=15,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.GREEN_100, offset=ft.Offset(0,0)),
-                        content=saldo_total
-                    ), 
-                    ], 
-                    alignment=ft.MainAxisAlignment.CENTER),
-                ft.Divider(height=5, thickness=3, color=ft.colors.BLACK26),
-                ft.Row(
-                    [
-                        ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                        analise,
+                        ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
                         btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
