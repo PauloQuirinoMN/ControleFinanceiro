@@ -8,7 +8,12 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-    branco = "#F4F5F0"
+        
+    b = '#00FF7F' 
+    c = '#ADFF2F'
+    d = '#FFC300' 
+
+    preto = '#3D3D3D'
     azul = "#4895EF"
     verde = "#75975e"
     grafite = '#747169'
@@ -23,17 +28,15 @@ def main(page: ft.Page):
     )
 
     total_entrada = ft.Container(
-        bgcolor=ft.colors.BLACK87,
         border_radius=5,
         height=60,
         width=120,
-        content=ft.Column(
+        content=ft.Row(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                ft.Text(value='Entradas', size=18, weight=ft.FontWeight.BOLD, color=azul),
+                ft.Icon(name=ft.icons.NORTH, color=verde),
+                ft.Text(value=0, size=15, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
@@ -42,13 +45,12 @@ def main(page: ft.Page):
         border_radius=5,
         height=60,
         width=120,
-        content=ft.Column(
+        content=ft.Row(
             [
-                ft.Text(value=0, size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
-                ft.Text(value='Saídas', size=18, weight=ft.FontWeight.BOLD, color=vermelho),
+                ft.Icon(name=ft.icons.SOUTH, color=vermelho),
+                ft.Text(value=0, size=15, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
         )
     )
 
@@ -58,10 +60,9 @@ def main(page: ft.Page):
         border_radius=5,
         content=ft.Row(
             [
-                ft.Text(value='SALDO', size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                ft.Text(value=0, size=25, weight=ft.FontWeight.BOLD, color=verde),
+                ft.Text(value=0, size=25, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54)
             ],
-            alignment=ft.MainAxisAlignment.SPACE_EVENLY
+            alignment=ft.MainAxisAlignment.END
         )
     )
 
@@ -327,9 +328,9 @@ def main(page: ft.Page):
                 sa += valor
         to = en - sa
 
-        total_entrada.content.controls[0].value = f"R$ {en:.2f}"
-        total_saida.content.controls[0].value = f"R$ {sa:.2f}"
-        saldo_total.content.controls[1].value =  f"R$ {to:.2f}"
+        total_entrada.content.controls[1].value = f"R$ {en:.2f}"
+        total_saida.content.controls[1].value = f"R$ {sa:.2f}"
+        saldo_total.content.controls[0].value =  f"R$ {to:.2f}"
 
         page.update()
 
@@ -423,8 +424,8 @@ def main(page: ft.Page):
 
     
     
-    data_inicial = ft.Text(value=0, size=15, color=ft.colors.WHITE)
-    data_final = ft.Text(value=0, size=15, color=ft.colors.WHITE)
+    data_inicial = ft.Text(value='__/__/__', size=15, color=ft.colors.WHITE)
+    data_final = ft.Text(value='__/__/__', size=15, color=ft.colors.WHITE)
 
     def calcular_totais(df_filtrado):
         # Filtra todas as transações do tipo "Entrada"
@@ -497,6 +498,7 @@ def main(page: ft.Page):
     def filtrando_tipo(e):
         global data_inicial_datetime, data_final_datetime
         tipo = e.control.data 
+
         # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente
         if data_inicial_datetime is not None and data_final_datetime is not None:
             df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
@@ -581,17 +583,55 @@ def main(page: ft.Page):
         datepicker_ate.open = True
         e.page.update()
 
-    quantidade_entrada = ft.Text(value="0. Entrada", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_entrada = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    quantidade_saida = ft.Text(value="0. Saída", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_saida = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    quantidade_transacoes = ft.Text(value="0. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
-    valor_transacoes = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.WHITE)
+    quantidade_entrada = ft.Text(value="0. Entrada", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
+    valor_entrada = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
+    quantidade_saida = ft.Text(value="0. Saída", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
+    valor_saida = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
+    quantidade_transacoes = ft.Text(value="0. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
+    valor_transacoes = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
 
+
+
+    filtro_tipo = ft.Container(
+        margin=10,
+        padding=10,
+        border_radius=10,
+        bgcolor=preto,
+        content=ft.Row(
+            [
+                ft.Container(
+                    data='E',
+                    on_click=filtrando_tipo,
+                    height=35,
+                    width=35,
+                    bgcolor=ft.colors.BLUE_100,
+                    shape=ft.BoxShape.CIRCLE,
+                    content=ft.Text(value="E", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.BLUE_50, text_align=ft.TextAlign.CENTER),
+                ),
+                ft.Container(
+                    data='S',
+                    on_click=filtrando_tipo,
+                    height=35,
+                    width=35,
+                    bgcolor=ft.colors.RED_100,
+                    shape=ft.BoxShape.CIRCLE,
+                    content=ft.Text(value="S", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.RED_50, text_align=ft.TextAlign.CENTER),
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_AROUND
+        )
+    )
 
     infor_geral = ft.Container(
-        margin=5,
-        padding=5,
+        padding=10,
+        margin=15,
+        border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+        gradient=ft.LinearGradient(
+            colors=[
+                b, c, d
+                    ]
+            ),
+        border_radius=10,
         content=ft.Column(
             [
                 ft.Row(
@@ -614,40 +654,11 @@ def main(page: ft.Page):
                         valor_transacoes,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
+                )
             ]
         )
     )
 
-
-
-    filtro_tipo = ft.Container(
-        border_radius=10,
-        bgcolor=ft.colors.WHITE10,
-        content=ft.Row(
-            [
-                ft.Container(
-                    data='E',
-                    on_click=filtrando_tipo,
-                    height=35,
-                    width=35,
-                    bgcolor=ft.colors.BLUE,
-                    shape=ft.BoxShape.CIRCLE,
-                    content=ft.Text(value="E", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.BLUE_50, text_align=ft.TextAlign.CENTER),
-                ),
-                ft.Container(
-                    data='S',
-                    on_click=filtrando_tipo,
-                    height=35,
-                    width=35,
-                    bgcolor=ft.colors.RED,
-                    shape=ft.BoxShape.CIRCLE,
-                    content=ft.Text(value="S", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.RED_50, text_align=ft.TextAlign.CENTER),
-                ),
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_AROUND
-        )
-    )
 
     barras_forma = ft.Container(
         expand=True,
@@ -777,11 +788,10 @@ def main(page: ft.Page):
     )
 
 
-
     pg_analise = ft.Container(
         expand=True,
-        bgcolor=ft.colors.BLACK,
-        padding=10,
+        bgcolor=preto,
+        padding=5,
         content=ft.Column(
             [
                 ft.Row(
@@ -790,73 +800,66 @@ def main(page: ft.Page):
                     ],
                     alignment=ft.MainAxisAlignment.END,
                 ),
-                ft.Text(value="Período", color=ft.colors.WHITE, size=18, weight=ft.FontWeight.BOLD),
                 ft.Column(
                     [
-                        ft.Row([
-                            data_inicial,
-                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_de),
-                            data_final,
-                            ft.IconButton(icon=ft.icons.CALENDAR_TODAY, icon_color=ft.colors.WHITE, on_click=abrir_date_ate)
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        ft.Text(value="Período", color=ft.colors.WHITE60, size=18, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.alignment.center_right),
+                        ft.Container(
+                            margin=10,
+                            border_radius=10,
+                            bgcolor=preto,
+                            content=ft.Row(
+                                [
+                                data_inicial,
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=ft.colors.WHITE, on_click=abrir_date_de),
+                                data_final,
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=ft.colors.WHITE, on_click=abrir_date_ate)
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                            ),
+                        )
                     ],
                 ),
                 infor_geral,
                 filtro_tipo,
+                ft.Divider(height=3, color=ft.colors.GREEN_100),
                 painel,
             ]
         )
     )
 
 
-    analise = ft.IconButton(icon=ft.icons.ANALYTICS, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
+    analise = ft.IconButton(icon=ft.icons.BAR_CHART_ROUNDED, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
     btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
+
+   
 
     layout = ft.Container(
         expand=True,
-        bgcolor=ft.colors.BLACK,
+        bgcolor=preto,
         border_radius=5,
         padding=5,
         content=ft.Column(
             [
-                ft.Row([
-                    ft.Container(
-                        margin=10,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.BLUE_100, offset=ft.Offset(0,0)),
-                        content=total_entrada
+                ft.Row([analise], alignment=ft.MainAxisAlignment.END),
+                ft.Container(
+                    margin=15,
+                    border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+                    gradient=ft.LinearGradient(
+                        colors=[
+                        b, c, d
+                        ]
                     ),
-                    ft.Container(
-                        margin=10,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.RED_100, offset=ft.Offset(0,0)),
-                        content=total_saida
-                    ), 
-                ],
-                alignment=ft.MainAxisAlignment.SPACE_AROUND),
+                    border_radius=10,
+                    content=ft.Column(
+                        [
+                            ft.Row([saldo_total], alignment=ft.MainAxisAlignment.END),
+                            ft.Row([total_entrada, total_saida], alignment=ft.MainAxisAlignment.CENTER, expand=True),
+                        ]
+                    )
+                ),
                 ft.Row(
                     [
-                        ft.Container(
-                        expand=True,
-                        margin=15,
-                        padding=5,
-                        bgcolor=ft.colors.BLACK,
-                        border_radius=10,
-                        shadow=ft.BoxShadow(spread_radius=1, blur_radius=2, color=ft.colors.GREEN_100, offset=ft.Offset(0,0)),
-                        content=saldo_total
-                    ), 
-                    ], 
-                    alignment=ft.MainAxisAlignment.CENTER),
-                ft.Divider(height=5, thickness=3, color=ft.colors.BLACK26),
-                ft.Row(
-                    [
-                        ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=grafite),
-                        analise,
+                        ft.Text(value='TRANSAÇÕES', size=20, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE),
                         btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
