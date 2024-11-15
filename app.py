@@ -8,7 +8,6 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-        
     b = '#00FF7F' 
     c = '#ADFF2F'
     d = '#FFC300' 
@@ -496,17 +495,31 @@ def main(page: ft.Page):
     #Aqui começa o tratamento para exibir informações sobre das transações e seus valores
     # dentro do período selecionado e filtrado por entrada ou saída
     def filtrando_tipo(e):
-        global data_inicial_datetime, data_final_datetime
-        tipo = e.control.data 
+        global data_inicial_datetime, data_final_datetime, tipo_selecao
+        tipo = e.control.data
 
         # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente
         if data_inicial_datetime is not None and data_final_datetime is not None:
             df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
             if tipo == 'E':
+                tipo_selecao = 'ENTRADAS'
+                rotulo_forma.value = f'As {tipo_selecao} estão divididas assim:' 
+                rotulo_forma.update()
+                categoria_rotulo.value = f'Distribuição das {tipo_selecao} entre as categorias'
+                categoria_rotulo.update()
+                rotulo_resumo.value = f'Resumo das {tipo_selecao}'
+                rotulo_resumo.update()
                 df_entradas = df[df['Tipo'] == 'Entrada']
                 df_entradas_processado = processa_dados(df_entradas)
                 return df_entradas_processado
             elif tipo == 'S':
+                tipo_selecao = 'SAÍDAS'
+                rotulo_forma.value = f'As {tipo_selecao} estão divididas assim:'
+                rotulo_forma.update()
+                categoria_rotulo.value = f'Distribuição das {tipo_selecao} entre as categorias'
+                categoria_rotulo.update()
+                rotulo_resumo.value = f'Resumo das {tipo_selecao}'
+                rotulo_resumo.update()
                 df_saidas = df[df['Tipo'] == 'Saída']
                 df_saidas_processado = processa_dados(df_saidas)
                 return df_saidas_processado
@@ -590,33 +603,20 @@ def main(page: ft.Page):
     quantidade_transacoes = ft.Text(value="0. Transações", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
     valor_transacoes = ft.Text(value="0.00 R$", weight=ft.FontWeight.W_500,  italic=True, size=15, color=ft.colors.BLACK54)
 
-
+    
+    btn_entrada = ft.ElevatedButton(text='ENTRADA', data='E', on_click=filtrando_tipo)
+    btn_saida = ft.ElevatedButton(text='SAÍDA', data='S', on_click=filtrando_tipo)
+  
 
     filtro_tipo = ft.Container(
         margin=10,
         padding=10,
-        border_radius=10,
+        border_radius=20,
         bgcolor=preto,
         content=ft.Row(
             [
-                ft.Container(
-                    data='E',
-                    on_click=filtrando_tipo,
-                    height=35,
-                    width=35,
-                    bgcolor=ft.colors.BLUE_100,
-                    shape=ft.BoxShape.CIRCLE,
-                    content=ft.Text(value="E", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.BLUE_50, text_align=ft.TextAlign.CENTER),
-                ),
-                ft.Container(
-                    data='S',
-                    on_click=filtrando_tipo,
-                    height=35,
-                    width=35,
-                    bgcolor=ft.colors.RED_100,
-                    shape=ft.BoxShape.CIRCLE,
-                    content=ft.Text(value="S", weight=ft.FontWeight.BOLD, size=20, color=ft.colors.RED_50, text_align=ft.TextAlign.CENTER),
-                ),
+                btn_entrada,
+                btn_saida
             ],
             alignment=ft.MainAxisAlignment.SPACE_AROUND
         )
@@ -700,85 +700,43 @@ def main(page: ft.Page):
         )
     )
 
-    lista=['Pix', 'Dinheiro', 'Outros', 'Fiado', 'Cartão']
-    porcentagem_forma = ['40', '30', '20', '10', '2']
 
-    pizza_forma = ft.Container(
+    descricao_forma = ft.Container(
+        border_radius=10,
+        margin=15,
         expand=True,
-        height=120,
-        width=100,
-        #bgcolor=ft.colors.AMBER_100,
-        content=ft.PieChart(
-            center_space_radius=15,
-            sections=[
-                ft.PieChartSection(
-                    value=40,
-                    title=f"{lista[0]} {porcentagem_forma[0]} %",
-                    radius=50,
-                    title_position=0.5,
-                ),
-            ],
-        )
-    )
-    real_forma = ft.Container(
+        bgcolor=ft.colors.WHITE,
         content=ft.Column(
-            [
-                ft.Row(
-                    [
-                        ft.Text(value="Pix...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
-                        ft.Text(value="2580,20", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
-                ft.Row(
-                    [
-                        ft.Text(value="Dinheiro...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
-                        ft.Text(value="1200.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
-                ft.Row(
-                    [
-                        ft.Text(value="Outros...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
-                        ft.Text(value="600.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
-                ft.Row(
-                    [
-                        ft.Text(value="Fiado...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
-                        ft.Text(value="200.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
-                ft.Row(
-                    [
-                        ft.Text(value="Cartão...", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300),
-                        ft.Text(value="0.00", color=ft.colors.WHITE, size=12, weight=ft.FontWeight.W_300)
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN
-                ),
+            controls=[
+                ft.Text(value='Pix ----> R$ 4532.25  / 58%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
+                ft.Text(value='Dinheiro ----> R$ 32.25  / 8%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
+                ft.Text(value='Fiado ----> R$ 532.25  / 18%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
+                ft.Text(value='Cartão ----> R$ 45.25  / 15%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
+                ft.Text(value='Outros ----> R$ 453.25  / 5%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300)
             ],
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            alignment=ft.MainAxisAlignment.CENTER,
+            spacing=10
         )
-    )
-        
+    )      
 
+    rotulo_forma = ft.Text(value=f'Formas', color=ft.colors.WHITE, size=18, italic=True, text_align=ft.TextAlign.CENTER)
+    categoria_rotulo = ft.Text(value=f'Categorias', color=ft.colors.WHITE, size=18, italic=True)
+    rotulo_resumo = ft.Text(value='Resumo', size=18, color=ft.colors.WHITE)
     painel = ft.Container(
 
         content=ft.Column(
-            [ 
-                ft.Text(value='Formas de Transações', color=ft.colors.WHITE, size=18, italic=True),
+            [                
+                rotulo_forma,
                 ft.Row(
                     [
-                        pizza_forma,
-                        real_forma
+                        descricao_forma
                     ],
-                    alignment=ft.MainAxisAlignment.SPACE_AROUND
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                    spacing=0.5
                 ),
-                ft.Text(value='Categorias das Transações', color=ft.colors.WHITE, size=18, italic=True),
+                categoria_rotulo,
                 barras_forma,
-                ft.Text(value='Sobre as Transações', color=ft.colors.WHITE, size=18, italic=True),
+                rotulo_resumo,
                 desc_porc_real
 
             ],
@@ -827,6 +785,7 @@ def main(page: ft.Page):
         )
     )
 
+    
 
     analise = ft.IconButton(icon=ft.icons.BAR_CHART_ROUNDED, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
     btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
