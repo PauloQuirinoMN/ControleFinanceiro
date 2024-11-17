@@ -701,21 +701,28 @@ def main(page: ft.Page):
     )
 
 
+    F_r = ft.Text(value='Pix', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+    F_v = ft.Text(value='R$ 4532.25', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+    F_p = ft.Text(value='58 %', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+    
+
     descricao_forma = ft.Container(
         border_radius=10,
         margin=15,
         expand=True,
-        bgcolor=ft.colors.WHITE,
+        #bgcolor=ft.colors.WHITE,
         content=ft.Column(
             controls=[
-                ft.Text(value='Pix ----> R$ 4532.25  / 58%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
-                ft.Text(value='Dinheiro ----> R$ 32.25  / 8%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
-                ft.Text(value='Fiado ----> R$ 532.25  / 18%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
-                ft.Text(value='Cartão ----> R$ 45.25  / 15%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300),
-                ft.Text(value='Outros ----> R$ 453.25  / 5%', size=20, color=ft.colors.BLACK, weight=ft.FontWeight.W_300)
-            ],
-            alignment=ft.MainAxisAlignment.CENTER,
-            spacing=10
+                ft.Container(
+                    margin=2, 
+                    content=ft.Row(
+                        [F_r, 
+                        F_v, 
+                        F_p
+                        ],expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                    )
+                ),
+            ]
         )
     )      
 
