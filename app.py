@@ -708,18 +708,21 @@ def main(page: ft.Page):
 
     descricao_forma = ft.Container(
         border_radius=10,
-        margin=15,
+        margin=10,
         expand=True,
         #bgcolor=ft.colors.WHITE,
         content=ft.Column(
             controls=[
                 ft.Container(
+                    expand=True,
+                    bgcolor=ft.colors.WHITE24,
+                    border_radius=20,
                     margin=2, 
                     content=ft.Row(
                         [F_r, 
                         F_v, 
                         F_p
-                        ],expand=True, alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                        ],expand=True, alignment=ft.MainAxisAlignment.SPACE_EVENLY
                     )
                 ),
             ]
