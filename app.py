@@ -421,7 +421,55 @@ def main(page: ft.Page):
     )
         page.update()
 
-    
+    def calcular_totais_por_forma(df):
+    # Verifica se o DataFrame está vazio
+        if df.empty:
+            return []
+
+        # Agrupa por "Forma de Pagamento" e calcula o total
+        totais = df.groupby('Forma de Transação')['Valor'].sum().reset_index()
+
+        # Calcula o total geral
+        total_geral = totais['Valor'].sum()
+
+        # Adiciona uma coluna para calcular o percentual
+        totais['Percentual'] = (totais['Valor'] / total_geral * 100).round(2)
+
+        return totais
+
+
+    def atualizar_descricao_forma(totais):
+    # Limpa os controles da coluna antes de adicionar os novos
+        descricao_forma.content.controls.clear()
+
+        for _, row in totais.iterrows():
+            # Cria os textos dinamicamente
+            F_r = ft.Text(value=row['Forma de Transação'], size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+            F_v = ft.Text(value=f"R$ {row['Valor']:.2f}", size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+            F_p = ft.Text(value=f"{row['Percentual']} %", size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
+
+            # Adiciona o container para cada forma de pagamento
+            descricao_forma.content.controls.append(
+                ft.Container(
+                    expand=True,
+                    bgcolor=ft.colors.WHITE24,
+                    border_radius=20,
+                    margin=2,
+                    content=ft.Row(
+                        [
+                            F_r,
+                            F_v,
+                            F_p
+                        ],
+                        expand=True, alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                    )
+                )
+            )
+        descricao_forma.update()  # Atualiza a interface
+
+
+
+
     
     data_inicial = ft.Text(value='__/__/__', size=15, color=ft.colors.WHITE)
     data_final = ft.Text(value='__/__/__', size=15, color=ft.colors.WHITE)
@@ -511,6 +559,10 @@ def main(page: ft.Page):
                 rotulo_resumo.update()
                 df_entradas = df[df['Tipo'] == 'Entrada']
                 df_entradas_processado = processa_dados(df_entradas)
+                # Processa os totais por forma de pagamento
+                totais = calcular_totais_por_forma(df_entradas)
+                # Atualiza os componentes
+                atualizar_descricao_forma(totais)
                 return df_entradas_processado
             elif tipo == 'S':
                 tipo_selecao = 'SAÍDAS'
@@ -522,9 +574,16 @@ def main(page: ft.Page):
                 rotulo_resumo.update()
                 df_saidas = df[df['Tipo'] == 'Saída']
                 df_saidas_processado = processa_dados(df_saidas)
+                # Processa os totais por forma de pagamento
+                totais = calcular_totais_por_forma(df_saidas)
+                # Atualiza os componentes
+                atualizar_descricao_forma(totais)
                 return df_saidas_processado
         else:
             return
+        
+        
+
 
     lista_trasacoes = []
     
@@ -701,6 +760,11 @@ def main(page: ft.Page):
     )
 
 
+
+    
+
+
+
     F_r = ft.Text(value='Pix', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_v = ft.Text(value='R$ 4532.25', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_p = ft.Text(value='58 %', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
@@ -719,10 +783,12 @@ def main(page: ft.Page):
                     border_radius=20,
                     margin=2, 
                     content=ft.Row(
-                        [F_r, 
-                        F_v, 
-                        F_p
-                        ],expand=True, alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                        [
+                            F_r,
+                            F_v,
+                            F_p
+                        ],
+                        expand=True, alignment=ft.MainAxisAlignment.SPACE_EVENLY
                     )
                 ),
             ]
@@ -740,6 +806,7 @@ def main(page: ft.Page):
                 ft.Row(
                     [
                         descricao_forma
+
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
                     spacing=0.5
@@ -789,7 +856,7 @@ def main(page: ft.Page):
                 ),
                 infor_geral,
                 filtro_tipo,
-                ft.Divider(height=3, color=ft.colors.GREEN_100),
+                ft.Divider(height=5, thickness=3, color=ft.colors.GREEN_100),
                 painel,
             ]
         )
