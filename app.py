@@ -718,53 +718,6 @@ def main(page: ft.Page):
         )
     )
 
-
-    barras_forma = ft.Container(
-        expand=True,
-        height=150,
-        content=ft.BarChart(
-            bar_groups=[
-                ft.BarChartGroup(
-                    x=0,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=40,
-                            width=20,
-                        ),
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=30,
-                            width=20,
-                        ),
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=20,
-                            width=20,
-                        ),
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=10,
-                            width=20,
-                        ),
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=2,
-                            width=20,
-                        ),
-                    ],
-                    bars_space=15,
-                )
-            ]
-        )
-    )
-
-
-
-    
-
-
-
     F_r = ft.Text(value='Pix', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_v = ft.Text(value='R$ 4532.25', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_p = ft.Text(value='58 %', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
@@ -793,11 +746,45 @@ def main(page: ft.Page):
                 ),
             ]
         )
-    )      
+    ) 
+
+    nom_cat = ft.Text(f'Alimentação', size=20, color='black', weight=ft.FontWeight.BOLD)
+    qua_cat = ft.Text(f'Quantidade 10', size=14, weight=ft.FontWeight.W_300)
+    val_cat = ft.Text(f'Valor R$ 100.00', size=14, weight=ft.FontWeight.W_300)
+    por_cat = ft.Text(f'Porcetagem 10 %', size=14, weight=ft.FontWeight.W_300)
+    vme_cat = ft.Text(f'V. Médio R$ 25.25', size=14, weight=ft.FontWeight.W_300)
+    vma_cat = ft.Text(f'V. Máximo R$ 36.69', size=14, weight=ft.FontWeight.W_300)
+    vmi_cat = ft.Text(f'V. Mínimo R$ 0.85', size=14, weight=ft.FontWeight.W_300)
+
+
+
+
+    categoria_resumo = ft.Container(
+        gradient=ft.LinearGradient(colors=[b, c, d]),
+        border_radius=20,
+        height=250,
+        width=150,
+        margin=15,
+        shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
+        content=ft.Column(
+            controls=[
+                nom_cat,
+                qua_cat,
+                val_cat,
+                por_cat,
+                vme_cat,
+                vma_cat,
+                vmi_cat
+            ],
+            alignment=ft.MainAxisAlignment.SPACE_AROUND,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER
+        )
+    )     
 
     rotulo_forma = ft.Text(value=f'Formas', color=ft.colors.WHITE, size=18, italic=True, text_align=ft.TextAlign.CENTER)
     categoria_rotulo = ft.Text(value=f'Categorias', color=ft.colors.WHITE, size=18, italic=True)
     rotulo_resumo = ft.Text(value='Resumo', size=18, color=ft.colors.WHITE)
+
     painel = ft.Container(
 
         content=ft.Column(
@@ -812,7 +799,7 @@ def main(page: ft.Page):
                     spacing=0.5
                 ),
                 categoria_rotulo,
-                barras_forma,
+                ft.Row([categoria_resumo,categoria_resumo, categoria_resumo, categoria_resumo ], scroll=ft.ScrollMode.AUTO),
                 rotulo_resumo,
                 desc_porc_real
 
