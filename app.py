@@ -558,6 +558,8 @@ def main(page: ft.Page):
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
                 df_entradas = df[df['Tipo'] == 'Entrada']
+                categorias_metricas = calcular_metricas_por_categoria(df_entradas)
+                atualizar_categorias_na_interface(categorias_metricas, coluna_categorias)
                 df_entradas_processado = processa_dados(df_entradas)
                 # Processa os totais por forma de pagamento
                 totais = calcular_totais_por_forma(df_entradas)
@@ -573,6 +575,11 @@ def main(page: ft.Page):
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
                 df_saidas = df[df['Tipo'] == 'Saída']
+                # Processa as métricas por categoria
+                categorias_metricas = calcular_metricas_por_categoria(df_saidas)
+
+            # Atualiza a interface com os dados processados
+                atualizar_categorias_na_interface(categorias_metricas, coluna_categorias)
                 df_saidas_processado = processa_dados(df_saidas)
                 # Processa os totais por forma de pagamento
                 totais = calcular_totais_por_forma(df_saidas)
@@ -582,8 +589,12 @@ def main(page: ft.Page):
         else:
             return
         
-        
-
+    coluna_categorias = ft.Row(
+    controls=[],  # Inicialmente vazio
+    scroll=ft.ScrollMode.AUTO,  # Permite rolar caso os itens ultrapassem o espaço visível
+    alignment=ft.MainAxisAlignment.START,
+    spacing=10,
+)
 
     lista_trasacoes = []
     
@@ -721,7 +732,7 @@ def main(page: ft.Page):
     F_r = ft.Text(value='Pix', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_v = ft.Text(value='R$ 4532.25', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
     F_p = ft.Text(value='58 %', size=20, color=ft.colors.WHITE, weight=ft.FontWeight.W_300)
-    
+   
 
     descricao_forma = ft.Container(
         border_radius=10,
@@ -748,7 +759,7 @@ def main(page: ft.Page):
         )
     ) 
 
-    nom_cat = ft.Text(f'Alimentação', size=20, color='black', weight=ft.FontWeight.BOLD)
+    nome_cat = ft.Text(f'Alimentação', size=20, color='black', weight=ft.FontWeight.BOLD)
     qua_cat = ft.Text(f'Quantidade 10', size=14, weight=ft.FontWeight.W_300)
     val_cat = ft.Text(f'Valor R$ 100.00', size=14, weight=ft.FontWeight.W_300)
     por_cat = ft.Text(f'Porcetagem 10 %', size=14, weight=ft.FontWeight.W_300)
@@ -757,7 +768,64 @@ def main(page: ft.Page):
     vmi_cat = ft.Text(f'V. Mínimo R$ 0.85', size=14, weight=ft.FontWeight.W_300)
 
 
+    def calcular_metricas_por_categoria(df):
+        """
+        Calcula métricas (quantidade, soma, média, mínimo, máximo) para cada categoria no DataFrame.
+        
+        :param df: DataFrame filtrado contendo os dados
+        :return: DataFrame com as métricas calculadas
+        """
+       
+        categorias = df.groupby("Categoria").agg(
+            Quantidade=("Valor", "count"),
+            Soma=("Valor", "sum"),
+            Média=("Valor", "mean"),
+            Mínimo=("Valor", "min"),
+            Máximo=("Valor", "max")
+        ).reset_index()
+        return categorias
+    
+    def atualizar_categorias_na_interface(categorias_df, coluna_categorias):
+        """
+        Atualiza os componentes da interface para refletir os dados processados por categoria.
+        
+        :param categorias_df: DataFrame com as métricas por categoria
+        :param coluna_categorias: Componente ft.Row contendo os contêineres das categorias
+        """
+        # Limpa os componentes antigos
+        coluna_categorias.controls.clear()
 
+        # Itera sobre as linhas do DataFrame para criar novos componentes
+        for _, row in categorias_df.iterrows():
+            nome_cat = ft.Text(f"{row['Categoria']}", size=20, color="black", weight=ft.FontWeight.BOLD)
+            qua_cat = ft.Text(f"Quantidade: {row['Quantidade']}", size=14, weight=ft.FontWeight.W_300)
+            val_cat = ft.Text(f"Valor: R$ {row['Soma']:.2f}", size=14, weight=ft.FontWeight.W_300)
+            por_cat = ft.Text(f"Porcentagem: {row['Soma'] / categorias_df['Soma'].sum() * 100:.1f}%", size=14, weight=ft.FontWeight.W_300)
+            vme_cat = ft.Text(f"V. Médio: R$ {row['Média']:.2f}", size=14, weight=ft.FontWeight.W_300)
+            vma_cat = ft.Text(f"V. Máximo: R$ {row['Máximo']:.2f}", size=14, weight=ft.FontWeight.W_300)
+            vmi_cat = ft.Text(f"V. Mínimo: R$ {row['Mínimo']:.2f}", size=14, weight=ft.FontWeight.W_300)
+
+            categoria_resumo = ft.Container(
+                gradient=ft.LinearGradient(colors=[b,c,d]),
+                border_radius=20,
+                height=250,
+                width=150,
+                margin=15,
+                shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
+                content=ft.Column(
+                    controls=[nome_cat, qua_cat, val_cat, por_cat, vme_cat, vma_cat, vmi_cat],
+                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                )
+            )
+
+            # Adiciona o contêiner à linha
+            coluna_categorias.controls.append(categoria_resumo)
+
+        # Atualiza a interface
+        coluna_categorias.update()
+
+    
 
     categoria_resumo = ft.Container(
         gradient=ft.LinearGradient(colors=[b, c, d]),
@@ -768,7 +836,7 @@ def main(page: ft.Page):
         shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
         content=ft.Column(
             controls=[
-                nom_cat,
+                nome_cat,
                 qua_cat,
                 val_cat,
                 por_cat,
@@ -799,7 +867,7 @@ def main(page: ft.Page):
                     spacing=0.5
                 ),
                 categoria_rotulo,
-                ft.Row([categoria_resumo,categoria_resumo, categoria_resumo, categoria_resumo ], scroll=ft.ScrollMode.AUTO),
+                coluna_categorias,
                 rotulo_resumo,
                 desc_porc_real
 
