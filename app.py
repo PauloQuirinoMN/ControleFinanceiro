@@ -183,12 +183,10 @@ def main(page: ft.Page):
 
     def salvar_dados(e): 
 
-
         if tipo.value is None or tipo.value == "":
             mostrar_alerta_erro_tipo()
             return
 
-    
         if not descricao.value.strip():
             mostrar_alerta_erro_descricao()
             return
@@ -200,7 +198,6 @@ def main(page: ft.Page):
             mostrar_alerta_erro_valor()
             return 
    
-
         arquivo = "transacoes.xlsx"
 
         agora = datetime.now()
@@ -290,9 +287,9 @@ def main(page: ft.Page):
                     border_radius=0,
                     content=ft.Row(
                         [
-                            ft.Text(row[1], width=70, size=15, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
-                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", width=70, size=15, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
-                            ft.Text(f"R$ {row[3]}", width=70, size=15, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
+                            ft.Text(row[1], size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
+                            ft.Text(f"R$ {row[3]}",  size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
                         spacing=10,
@@ -444,24 +441,30 @@ def main(page: ft.Page):
 
         for _, row in totais.iterrows():
             # Cria os textos dinamicamente
-            F_r = ft.Text(value=row['Forma de Transação'], size=18, color=ft.colors.WHITE, weight=ft.FontWeight.W_500)
-            F_v = ft.Text(value=f"R$ {row['Valor']:.2f}", size=18, color=ft.colors.WHITE, weight=ft.FontWeight.W_500)
-            F_p = ft.Text(value=f"{row['Percentual']} %", size=18, color=ft.colors.WHITE, weight=ft.FontWeight.W_500)
+            F_r = ft.Text(value=row['Forma de Transação'], size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            F_v = ft.Text(value=f"R$ {row['Valor']:.2f}", size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            F_p = ft.Text(value=f"{row['Percentual']} %", size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
 
             # Adiciona o container para cada forma de pagamento
             descricao_forma.content.controls.append(
                 ft.Container(
                     expand=True,
-                    bgcolor=ft.colors.WHITE24,
-                    border_radius=20,
-                    margin=2,
+                    #bgcolor=ft.colors.WHITE24,
+                    gradient=ft.LinearGradient(
+                        colors=[
+                            b,c,d
+                        ]
+                    ),
+                    padding=5,
+                    border_radius=15,
                     content=ft.Row(
                         [
                             F_r,
                             F_v,
                             F_p
                         ],
-                        expand=True, alignment=ft.MainAxisAlignment.SPACE_EVENLY
+                        expand=True, 
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                     )
                 )
             )
@@ -548,9 +551,9 @@ def main(page: ft.Page):
             df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
             if tipo == 'E':
                 tipo_selecao = 'ENTRADAS'
-                rotulo_forma.value = f'As {tipo_selecao} estão divididas assim:' 
+                rotulo_forma.value = f'As Formas de {tipo_selecao} :' 
                 rotulo_forma.update()
-                categoria_rotulo.value = f'Distribuição das {tipo_selecao} entre as categorias'
+                categoria_rotulo.value = f'As {tipo_selecao} entre as categorias'
                 categoria_rotulo.update()
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
@@ -565,9 +568,9 @@ def main(page: ft.Page):
                 return df_entradas_processado
             elif tipo == 'S':
                 tipo_selecao = 'SAÍDAS'
-                rotulo_forma.value = f'As {tipo_selecao} estão divididas assim:'
+                rotulo_forma.value = f'As Formas de {tipo_selecao}:'
                 rotulo_forma.update()
-                categoria_rotulo.value = f'Distribuição das {tipo_selecao} entre as categorias'
+                categoria_rotulo.value = f'As {tipo_selecao} entre as categorias:'
                 categoria_rotulo.update()
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
@@ -756,14 +759,6 @@ def main(page: ft.Page):
         )
     ) 
 
-    nome_cat = ft.Text(f'Alimentação', size=20, color='black', weight=ft.FontWeight.BOLD)
-    qua_cat = ft.Text(f'Quantidade 10', size=14, weight=ft.FontWeight.W_300)
-    val_cat = ft.Text(f'Valor R$ 100.00', size=14, weight=ft.FontWeight.W_300)
-    por_cat = ft.Text(f'Porcet. 10 %', size=14, weight=ft.FontWeight.W_300)
-    vme_cat = ft.Text(f'Valor Méd. R$ 25.25', size=14, weight=ft.FontWeight.W_300)
-    vma_cat = ft.Text(f'Valor Máx R$ 36.69', size=14, weight=ft.FontWeight.W_300)
-    vmi_cat = ft.Text(f'Valor Mín R$ 0.85', size=14, weight=ft.FontWeight.W_300)
-
 
     def calcular_metricas_por_categoria(df):
         """
@@ -797,8 +792,8 @@ def main(page: ft.Page):
             nome_cat = ft.Text(f"{row['Categoria']}", size=20, color=ft.colors.BLACK54, weight=ft.FontWeight.BOLD)
             qua_cat = ft.Text(f"Quantidade: {row['Quantidade']}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
             val_cat = ft.Text(f"Valor: R$ {row['Soma']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            por_cat = ft.Text(f"Porcentagem: {row['Soma'] / categorias_df['Soma'].sum() * 100:.1f}%", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            vme_cat = ft.Text(f"Valor Médio: R$ {row['Média']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            por_cat = ft.Text(f"Porcent: {row['Soma'] / categorias_df['Soma'].sum() * 100:.1f}%", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            vme_cat = ft.Text(f"Valor Méd: R$ {row['Média']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
             vma_cat = ft.Text(f"Valor Máx: R$ {row['Máximo']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
             vmi_cat = ft.Text(f"Valor Mín: R$ {row['Mínimo']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
 
@@ -811,7 +806,7 @@ def main(page: ft.Page):
                 shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
                 content=ft.Column(
                     controls=[nome_cat, qua_cat, val_cat, por_cat, vme_cat, vma_cat, vmi_cat],
-                    alignment=ft.MainAxisAlignment.SPACE_AROUND,
+                    alignment=ft.MainAxisAlignment.START,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER
                 )
             )
@@ -824,27 +819,7 @@ def main(page: ft.Page):
 
     
 
-    categoria_resumo = ft.Container(
-        gradient=ft.LinearGradient(colors=[b, c, d]),
-        border_radius=20,
-        height=250,
-        width=150,
-        margin=15,
-        shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
-        content=ft.Column(
-            controls=[
-                nome_cat,
-                qua_cat,
-                val_cat,
-                por_cat,
-                vme_cat,
-                vma_cat,
-                vmi_cat
-            ],
-            alignment=ft.MainAxisAlignment.SPACE_AROUND,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER
-        )
-    )     
+      
 
     rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color=ft.colors.WHITE60, size=20, italic=True, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
     categoria_rotulo = ft.Text(value='', size=20, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.CENTER)
@@ -928,7 +903,7 @@ def main(page: ft.Page):
                 ft.Row([analise], alignment=ft.MainAxisAlignment.END),
                 ft.Container(
                     margin=15,
-                    border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+                    border=ft.border.all(width=0.5, color=ft.colors.BLACK),
                     gradient=ft.LinearGradient(
                         colors=[
                         b, c, d
