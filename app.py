@@ -8,10 +8,7 @@ import pandas as pd
 
 def main(page: ft.Page):
 
-    b = '#00FF7F' 
-    c = '#ADFF2F'
-    d = '#FFC300' 
-
+    cor_textos = '#F5F5F5'
     preto = '#3D3D3D'
     azul = "#4895EF"
     verde = "#75975e"
@@ -27,39 +24,36 @@ def main(page: ft.Page):
     )
 
     total_entrada = ft.Container(
-        border_radius=5,
         height=60,
         width=120,
         content=ft.Row(
             [
                 ft.Icon(name=ft.icons.NORTH, color=verde),
-                ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54),
+                ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=cor_textos),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
     )
 
     total_saida = ft.Container(
-        bgcolor=ft.colors.TRANSPARENT,
-        border_radius=5,
         height=60,
         width=120,
         content=ft.Row(
             [
                 ft.Icon(name=ft.icons.SOUTH, color=vermelho),
-                ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54),
+                ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=cor_textos),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
         )
     )
 
     saldo_total = ft.Container(
-        margin=10,
+        margin=15,
         expand=True,
         border_radius=5,
         content=ft.Row(
             [
-                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD, color=ft.colors.BLACK54)
+                ft.Text(value=0, size=30, weight=ft.FontWeight.BOLD, color=cor_textos)
             ],
             alignment=ft.MainAxisAlignment.END
         )
@@ -287,9 +281,9 @@ def main(page: ft.Page):
                     border_radius=0,
                     content=ft.Row(
                         [
-                            ft.Text(row[1], size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
-                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
-                            ft.Text(f"R$ {row[3]}",  size=14, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500),
+                            ft.Text(row[1], size=14, color=cor_textos, weight=ft.FontWeight.W_500),
+                            ft.Text(f"{row[7]}/{row[6]}/{row[5]}", size=14, color=cor_textos, weight=ft.FontWeight.W_500),
+                            ft.Text(f"R$ {row[3]}",  size=14, color=cor_textos, weight=ft.FontWeight.W_500),
                         ],
                         alignment=ft.MainAxisAlignment.SPACE_AROUND,
                         spacing=10,
@@ -441,22 +435,26 @@ def main(page: ft.Page):
 
         for _, row in totais.iterrows():
             # Cria os textos dinamicamente
-            F_r = ft.Text(value=row['Forma de Transação'], size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            F_v = ft.Text(value=f"R$ {row['Valor']:.2f}", size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            F_p = ft.Text(value=f"{row['Percentual']} %", size=18, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            F_r = ft.Text(value=row['Forma de Transação'], size=18, color=cor_textos, weight=ft.FontWeight.W_500)
+            F_v = ft.Text(value=f"R$ {row['Valor']:.2f}", size=18, color=cor_textos, weight=ft.FontWeight.W_500)
+            F_p = ft.Text(value=f"{row['Percentual']} %", size=18, color=cor_textos, weight=ft.FontWeight.W_500)
 
             # Adiciona o container para cada forma de pagamento
             descricao_forma.content.controls.append(
                 ft.Container(
+                    margin=0,
+                    padding=5,
+                    border_radius=5,
                     expand=True,
-                    #bgcolor=ft.colors.WHITE24,
                     gradient=ft.LinearGradient(
                         colors=[
-                            b,c,d
+                            "#007B83",
+                            "#008A7A",
+                            "#009570",
+                            "#00A067",
+                            "#00A86B",
                         ]
                     ),
-                    padding=5,
-                    border_radius=15,
                     content=ft.Row(
                         [
                             F_r,
@@ -471,8 +469,8 @@ def main(page: ft.Page):
         descricao_forma.update()  # Atualiza a interface
 
  
-    data_inicial = ft.Text(value='Data Inicial', size=20, weight=ft.FontWeight.W_500, color=ft.colors.WHITE60)
-    data_final = ft.Text(value='Data Final', size=20, weight=ft.FontWeight.W_500, color=ft.colors.WHITE60)
+    data_inicial = ft.Text(value='Data Inicial', size=18, weight=ft.FontWeight.W_500, color="#A6A6A6")
+    data_final = ft.Text(value='Data Final', size=18, weight=ft.FontWeight.W_500, color="#A6A6A6")
 
     def calcular_totais(df_filtrado):
         # Filtra todas as transações do tipo "Entrada"
@@ -512,11 +510,11 @@ def main(page: ft.Page):
 
         data_formatada = selected_date.strftime("%d/%m/%y")
         if e.control.data == "from_date":
-            data_inicial.value = f"De: {data_formatada}"
+            data_inicial.value = f" De: {data_formatada}"
             data_inicial_datetime = selected_date
             data_inicial.update()
         elif e.control.data == "to_date":
-            data_final.value = f"Até: {data_formatada}"
+            data_final.value = f"Até: {data_formatada} "
             data_final_datetime = selected_date
             data_final.update()
 
@@ -551,9 +549,9 @@ def main(page: ft.Page):
             df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
             if tipo == 'E':
                 tipo_selecao = 'ENTRADAS'
-                rotulo_forma.value = f'As Formas de {tipo_selecao} :' 
+                rotulo_forma.value = f' Formas de {tipo_selecao} :' 
                 rotulo_forma.update()
-                categoria_rotulo.value = f'As {tipo_selecao} entre as categorias'
+                categoria_rotulo.value = f'  {tipo_selecao} entre as categorias'
                 categoria_rotulo.update()
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
@@ -568,9 +566,9 @@ def main(page: ft.Page):
                 return df_entradas_processado
             elif tipo == 'S':
                 tipo_selecao = 'SAÍDAS'
-                rotulo_forma.value = f'As Formas de {tipo_selecao}:'
+                rotulo_forma.value = f'  Formas de {tipo_selecao}:'
                 rotulo_forma.update()
-                categoria_rotulo.value = f'As {tipo_selecao} entre as categorias:'
+                categoria_rotulo.value = f'  {tipo_selecao} entre as categorias:'
                 categoria_rotulo.update()
                 rotulo_resumo.value = f'Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
@@ -623,7 +621,7 @@ def main(page: ft.Page):
 
         for i in listas_processadas:
             trasa_text = f"{i[1]} x {i[0]}  R$ {i[2]:.2f}  total de {i[3]} %"
-            u = ft.Row([ft.Text(trasa_text, style=ft.TextStyle(size=15, color=ft.colors.WHITE60))])
+            u = ft.Row([ft.Text(trasa_text, style=ft.TextStyle(size=15, color=cor_textos))])
             # Adiciona a linha ao container desc_porc_real
             desc_porc_real.content.controls.append(u)
         # Atualiza o container para exibir as novas linhas
@@ -666,16 +664,16 @@ def main(page: ft.Page):
         datepicker_ate.open = True
         e.page.update()
 
-    quantidade_entrada = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
-    valor_entrada = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
-    quantidade_saida = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
-    valor_saida = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
-    quantidade_transacoes = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
-    valor_transacoes = ft.Text(value="", color=ft.colors.BLACK54, size=18, weight=ft.FontWeight.W_500)
+    quantidade_entrada = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
+    valor_entrada = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
+    quantidade_saida = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
+    valor_saida = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
+    quantidade_transacoes = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
+    valor_transacoes = ft.Text(value="", color=cor_textos, size=18, weight=ft.FontWeight.W_500)
 
     
-    btn_entrada = ft.ElevatedButton(text='ENTRADA', data='E', on_click=filtrando_tipo)
-    btn_saida = ft.ElevatedButton(text='SAÍDA', data='S', on_click=filtrando_tipo)
+    btn_entrada = ft.ElevatedButton(text='ENTRADA',  color=cor_textos, data='E', on_click=filtrando_tipo, bgcolor="#007B83", elevation=0.8)
+    btn_saida = ft.ElevatedButton(text='SAÍDA',  color=cor_textos, data='S', on_click=filtrando_tipo, bgcolor="#007B83", elevation=0.8)
   
 
     filtro_tipo = ft.Container(
@@ -698,8 +696,12 @@ def main(page: ft.Page):
         border=ft.border.all(width=0.5, color=ft.colors.WHITE),
         gradient=ft.LinearGradient(
             colors=[
-                b, c, d
-                    ]
+                "#007B83",
+                "#008A7A",
+                "#009570",
+                "#00A067",
+                 "#00A86B",
+                ]
             ),
         border_radius=10,
         content=ft.Column(
@@ -738,12 +740,10 @@ def main(page: ft.Page):
         border_radius=10,
         margin=10,
         expand=True,
-        #bgcolor=ft.colors.WHITE,
         content=ft.Column(
             controls=[
                 ft.Container(
                     expand=True,
-                    bgcolor=ft.colors.WHITE24,
                     border_radius=20,
                     margin=2, 
                     content=ft.Row(
@@ -789,16 +789,24 @@ def main(page: ft.Page):
 
         # Itera sobre as linhas do DataFrame para criar novos componentes
         for _, row in categorias_df.iterrows():
-            nome_cat = ft.Text(f"{row['Categoria']}", size=20, color=ft.colors.BLACK54, weight=ft.FontWeight.BOLD)
-            qua_cat = ft.Text(f"Quantidade: {row['Quantidade']}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            val_cat = ft.Text(f"Valor: R$ {row['Soma']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            por_cat = ft.Text(f"Porcent: {row['Soma'] / categorias_df['Soma'].sum() * 100:.1f}%", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            vme_cat = ft.Text(f"Valor Méd: R$ {row['Média']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            vma_cat = ft.Text(f"Valor Máx: R$ {row['Máximo']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
-            vmi_cat = ft.Text(f"Valor Mín: R$ {row['Mínimo']:.2f}", size=14, color=ft.colors.BLACK54, weight=ft.FontWeight.W_500)
+            nome_cat = ft.Text(f"{row['Categoria']}", size=20, color=cor_textos, weight=ft.FontWeight.BOLD)
+            qua_cat = ft.Text(f"Quantidade: {row['Quantidade']}", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
+            val_cat = ft.Text(f"Valor: R$ {row['Soma']:.2f}", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
+            por_cat = ft.Text(f"Porcent: {row['Soma'] / categorias_df['Soma'].sum() * 100:.1f}%", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
+            vme_cat = ft.Text(f"Valor Méd: R$ {row['Média']:.2f}", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
+            vma_cat = ft.Text(f"Valor Máx: R$ {row['Máximo']:.2f}", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
+            vmi_cat = ft.Text(f"Valor Mín: R$ {row['Mínimo']:.2f}", size=14, color=cor_textos, weight=ft.FontWeight.W_500)
 
             categoria_resumo = ft.Container(
-                gradient=ft.LinearGradient(colors=[b,c,d]),
+                gradient=ft.LinearGradient(
+                    colors=[
+                        "#007B83",
+                        "#008A7A",
+                        "#009570",
+                        "#00A067",
+                        "#00A86B",
+                    ]
+                ),
                 border_radius=20,
                 height=250,
                 width=150,
@@ -821,9 +829,9 @@ def main(page: ft.Page):
 
       
 
-    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color=ft.colors.WHITE60, size=20, italic=True, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
-    categoria_rotulo = ft.Text(value='', size=20, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.CENTER)
-    rotulo_resumo = ft.Text(value='', size=20, color=ft.colors.WHITE60, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.CENTER)
+    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color="#A6A6A6", size=20, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
+    categoria_rotulo = ft.Text(value='', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
+    rotulo_resumo = ft.Text(value='', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
 
     painel = ft.Container(
         content=ft.Column(
@@ -863,7 +871,7 @@ def main(page: ft.Page):
                     [
                         ft.Row(
                             [
-                                ft.Text(value="  Período", color=ft.colors.WHITE60, size=20, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.alignment.center_left)
+                                ft.Text(value=" Período", color="#A6A6A6", size=20, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.alignment.center_left)
                             ],
                             alignment=ft.alignment.center_left
                         ),
@@ -872,9 +880,9 @@ def main(page: ft.Page):
                             content=ft.Row(
                                 [
                                 data_inicial,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=ft.colors.WHITE, on_click=abrir_date_de),
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color="#A6A6A6", on_click=abrir_date_de),
                                 data_final,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=ft.colors.WHITE, on_click=abrir_date_ate)
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color="#A6A6A6", on_click=abrir_date_ate)
                                 ],
                                 alignment=ft.MainAxisAlignment.SPACE_AROUND
                             ),
@@ -895,7 +903,7 @@ def main(page: ft.Page):
 
     layout = ft.Container(
         expand=True,
-        bgcolor=preto,
+        bgcolor= '#2C2C2E',
         border_radius=5,
         padding=5,
         content=ft.Column(
@@ -903,10 +911,14 @@ def main(page: ft.Page):
                 ft.Row([analise], alignment=ft.MainAxisAlignment.END),
                 ft.Container(
                     margin=15,
-                    border=ft.border.all(width=0.5, color=ft.colors.BLACK),
+                    border=ft.border.all(width=0.5, color=ft.colors.WHITE),
                     gradient=ft.LinearGradient(
                         colors=[
-                        b, c, d
+                            "#007B83",
+                            "#008A7A",
+                            "#009570",
+                            "#00A067",
+                            "#00A86B",
                         ]
                     ),
                     border_radius=10,
@@ -919,7 +931,7 @@ def main(page: ft.Page):
                 ),
                 ft.Row(
                     [
-                        ft.Text(value='HISTÓRICO', size=18, weight=ft.FontWeight.BOLD, color=ft.colors.WHITE60),
+                        ft.Text(value='HISTÓRICO', size=18, weight=ft.FontWeight.BOLD, color="#A6A6A6"),
                         btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
