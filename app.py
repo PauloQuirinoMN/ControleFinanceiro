@@ -549,6 +549,13 @@ def main(page: ft.Page):
             snack_bar.open = True
             page.update()  # Atualiza para exibir o SnackBar
             return
+         # Verificar se a data inicial é posterior à data final
+        if data_inicial_datetime > data_final_datetime:
+            snack_bar = ft.SnackBar(content=ft.Text("A data inicial não pode ser posterior à data final."))
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
+            page.update()
+            return
         tipo = e.control.data
 
         # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente
@@ -664,12 +671,22 @@ def main(page: ft.Page):
         return df_filtrado
 
     datepicker_de = ft.DatePicker(
+        cancel_text='Cancelar',
+        confirm_text='confirmar',
+        field_hint_text='MM/DD/AAAA',
+        field_label_text='Selecione uma Data',
+        help_text='Calendário',
         open=False,
         data="from_date",
         on_change=on_date_selected 
     )
 
     datepicker_ate = ft.DatePicker(
+        cancel_text='Cancelar',
+        confirm_text='confirmar',
+        field_hint_text='MM/DD/AAAA',
+        field_label_text='Selecione uma Data',
+        help_text='Calendário',
         open=False,
         data="to_date",
         on_change=on_date_selected 
@@ -971,7 +988,12 @@ def main(page: ft.Page):
 
     page.add(
         layout,
-        ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
+        ft.FloatingActionButton(
+            elevation=10,
+            bgcolor=verde,
+            shape=ft.CircleBorder(),
+            icon=ft.icons.ADD, 
+            on_click=formulario)
     )
 if __name__ == "__main__":
     ft.app(target=main, view=ft.AppView.FLET_APP)
