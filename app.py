@@ -5,9 +5,13 @@ from datetime import datetime # Capturar informações de data e hora
 import pandas as pd
 
 
+data_inicial_datetime = None
+data_final_datetime = None
+
 
 def main(page: ft.Page):
 
+    
     cor_textos = '#F5F5F5'
     preto = '#3D3D3D'
     azul = "#4895EF"
@@ -498,10 +502,6 @@ def main(page: ft.Page):
         }
     
 
-    # Inicializando as variáveis globais com None
-    data_inicial_datetime = None
-    data_final_datetime = None
-
     def on_date_selected(e):
 
         global data_inicial_datetime, data_final_datetime
@@ -542,6 +542,13 @@ def main(page: ft.Page):
     # dentro do período selecionado e filtrado por entrada ou saída
     def filtrando_tipo(e):
         global data_inicial_datetime, data_final_datetime, tipo_selecao
+        # Verificar se as datas inicial e final foram selecionadas
+        if data_inicial_datetime is None or data_final_datetime is None :
+            snack_bar = ft.SnackBar(content=ft.Text("Por favor, selecione o período inicial e final.", color=ft.colors.BLACK), bgcolor=ft.colors.WHITE)
+            page.overlay.append(snack_bar)
+            snack_bar.open = True
+            page.update()  # Atualiza para exibir o SnackBar
+            return
         tipo = e.control.data
 
         # Checar se ambas as datas foram selecionadas (ou se data final foi preenchida automaticamente
@@ -549,13 +556,20 @@ def main(page: ft.Page):
             df = filtrar_dados_por_periodo(data_inicial_datetime, data_final_datetime)
             if tipo == 'E':
                 tipo_selecao = 'ENTRADAS'
-                rotulo_forma.value = f' Formas de {tipo_selecao} :' 
+                rotulo_forma.value = f'   Formas de {tipo_selecao} :' 
                 rotulo_forma.update()
-                categoria_rotulo.value = f'  {tipo_selecao} entre as categorias'
+                categoria_rotulo.value = f'   {tipo_selecao} entre as categorias'
                 categoria_rotulo.update()
-                rotulo_resumo.value = f'Resumo das {tipo_selecao}'
+                rotulo_resumo.value = f'   Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
                 df_entradas = df[df['Tipo'] == 'Entrada']
+                if df_entradas.empty:
+                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de entradas no período selecionado!", color=ft.colors.BLACK), bgcolor=ft.colors.WHITE)
+                    page.overlay.append(snack_bar)
+                    snack_bar.open = True
+                    page.update()
+                    snack_bar.open()
+                    return
                 categorias_metricas = calcular_metricas_por_categoria(df_entradas)
                 atualizar_categorias_na_interface(categorias_metricas, coluna_categorias)
                 df_entradas_processado = processa_dados(df_entradas)
@@ -566,13 +580,20 @@ def main(page: ft.Page):
                 return df_entradas_processado
             elif tipo == 'S':
                 tipo_selecao = 'SAÍDAS'
-                rotulo_forma.value = f'  Formas de {tipo_selecao}:'
+                rotulo_forma.value = f'   Formas de {tipo_selecao}:'
                 rotulo_forma.update()
-                categoria_rotulo.value = f'  {tipo_selecao} entre as categorias:'
+                categoria_rotulo.value = f'   {tipo_selecao} entre as categorias:'
                 categoria_rotulo.update()
-                rotulo_resumo.value = f'Resumo das {tipo_selecao}'
+                rotulo_resumo.value = f'   Resumo das {tipo_selecao}'
                 rotulo_resumo.update()
                 df_saidas = df[df['Tipo'] == 'Saída']
+                if df_saidas.empty:
+                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de saídas no período selecionado!", color=ft.colors.BLACK),bgcolor=ft.colors.WHITE)
+                    page.overlay.append(snack_bar)
+                    snack_bar.open = True
+                    page.update()
+                    snack_bar.open()
+                    return
                 # Processa as métricas por categoria
                 categorias_metricas = calcular_metricas_por_categoria(df_saidas)
 
@@ -831,9 +852,11 @@ def main(page: ft.Page):
 
     rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color="#A6A6A6", size=20, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
     categoria_rotulo = ft.Text(value='', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
-    rotulo_resumo = ft.Text(value='', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
+    rotulo_resumo = ft.Text(value=' ', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
 
     painel = ft.Container(
+        padding=10,
+        margin=5,
         content=ft.Column(
             [                
                 rotulo_forma,
@@ -849,6 +872,7 @@ def main(page: ft.Page):
                 rotulo_resumo,
                 desc_porc_real
             ],
+            alignment=ft.MainAxisAlignment.START,
             scroll=ft.ScrollMode.AUTO,
         ),
         expand=True,
