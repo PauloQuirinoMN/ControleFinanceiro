@@ -64,53 +64,68 @@ def main(page: ft.Page):
     )
 
     tipo = ft.Dropdown(
+        bgcolor=verde,
+        border_width=1,
+        border_radius=15,
+        color="#007B83",
+        label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD),
         label='Tipo de Transação',
         options=
         [
-            ft.dropdown.Option('Entrada'),
-            ft.dropdown.Option('Saída'),                    
+            ft.dropdown.Option('Entrada', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Saída', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),                    
         ],
     )
-
-    descricao = ft.TextField(label='Descrição')
 
     categoria = ft.Dropdown(
+        bgcolor=verde,
+        border_width=1,
+        border_radius=15,
+        color="#007B83",
+        label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD),
         label='Categoria',
         options=[
-            ft.dropdown.Option('Alimento'),
-            ft.dropdown.Option('Transporte'), 
-            ft.dropdown.Option('Salário'),
-            ft.dropdown.Option('Lazer'),
-            ft.dropdown.Option('Moradia'),
-            ft.dropdown.Option('Vestiuário'),
-            ft.dropdown.Option('Esposte'),
-            ft.dropdown.Option('Empréstimos'),  
-            ft.dropdown.Option('Outros'),                 
+            ft.dropdown.Option('Alimento', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Transporte', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)), 
+            ft.dropdown.Option('Salário', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Lazer', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Moradia', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Vestiuário', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Esposte', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Empréstimos', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),  
+            ft.dropdown.Option('Outros', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),                 
         ]
     )
+     
+    descricao = ft.TextField(label='Descrição', label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD), border_width=1, border_radius=15, color=cor_textos, text_style=ft.TextStyle(size=15, weight=ft.FontWeight.BOLD))
 
-    valor =  ft.TextField(label='Valor')
+    valor =  ft.TextField(label='Valor', label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD), border_width=1, border_radius=15, color=cor_textos, text_style=ft.TextStyle(size=15, weight=ft.FontWeight.BOLD))
 
     forma = ft.Dropdown(
+        bgcolor=verde,
+        border_width=1,
+        color=cor_textos,
+        border_radius=15,
+        label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD),
         label='Forma de Transação',
         options=[
-            ft.dropdown.Option('Dinheiro'),
-            ft.dropdown.Option('Cartão'), 
-            ft.dropdown.Option('Pix'),
-            ft.dropdown.Option('Fiado'), 
-            ft.dropdown.Option('Outro'),                   
+            ft.dropdown.Option('Dinheiro', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Cartão', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)), 
+            ft.dropdown.Option('Pix', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Fiado', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)), 
+            ft.dropdown.Option('Outro', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),                   
         ],
     )
 
-    anom = ft.TextField(label='Ano', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
-    mesm = ft.TextField(label='Mês', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
-    diam = ft.TextField(label='Dia', keyboard_type = ft.KeyboardType.NUMBER, height=30, width=80)
+    anom = ft.TextField(label='Ano',label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD), border_width=1, border_radius=15, color=cor_textos, text_style=ft.TextStyle(size=15, weight=ft.FontWeight.BOLD))
+    mesm = ft.TextField(label='Mês',label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD), border_width=1, border_radius=15, color=cor_textos, text_style=ft.TextStyle(size=15, weight=ft.FontWeight.BOLD))
+    diam = ft.TextField(label='Dia',label_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD), border_width=1, border_radius=15, color=cor_textos, text_style=ft.TextStyle(size=15, weight=ft.FontWeight.BOLD))
    
     data_manual = ft.Container(
         content=ft.Column(
             [
                 ft.Divider(),
-                ft.Text(value='Ano, Mês e Dia para períodos passados', size=15, italic=True, color=vermelho),
+                ft.Text(value='Ano, Mês e Dia para períodos passados', size=15, italic=True, color=cor_textos),
                 anom,
                 mesm,
                 diam,
@@ -329,19 +344,23 @@ def main(page: ft.Page):
         page.update()
 
     alerta_Form = ft.AlertDialog(
-        title=ft.Text(value='Nova transação', color=grafite),
+        shape=ft.RoundedRectangleBorder(radius=10),
+        bgcolor=verde,
+        content_padding=10,
+        title=ft.Text(value='Nova transação', color=cor_textos),
         content=ft.Column(
             [
                 tipo, 
-                descricao,
                 categoria,
-                valor,
                 forma,
+                descricao,
+                valor,
+                ft.Text(value='      A data será registrada automáticamente', color=cor_textos, size=12, italic=True),
                 data_manual,
             ]
         ),
         actions=[
-            ft.ElevatedButton('Salvar', on_click=salvar_dados)
+            ft.ElevatedButton('Salvar', on_click=salvar_dados, bgcolor="#007B83", color=cor_textos)
         ],
         open=False
     )
@@ -382,7 +401,7 @@ def main(page: ft.Page):
             content=ft.Text("Você tem certeza que deseja apagar todos os dados? esta ação é irreversível", color=vermelho, size=15, weight=ft.FontWeight.BOLD, italic=True),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: remover_alerta(alerta_confirmacao_limpeza)),
-                ft.ElevatedButton("Confirmar",on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
+                ft.ElevatedButton("Confirmar", bgcolor="#007B83", on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
                                                                    limpardados(e)
                 ]
                 ),
@@ -412,7 +431,7 @@ def main(page: ft.Page):
         page.clean()
         page.add(
         layout,
-        ft.FloatingActionButton(icon=ft.icons.ADD, on_click=formulario)
+        botao_formulario
     )
         page.update()
 
@@ -738,7 +757,7 @@ def main(page: ft.Page):
                 "#008A7A",
                 "#009570",
                 "#00A067",
-                 "#00A86B",
+                "#00A86B",
                 ]
             ),
         border_radius=10,
@@ -867,9 +886,9 @@ def main(page: ft.Page):
 
       
 
-    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color="#A6A6A6", size=20, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
-    categoria_rotulo = ft.Text(value='', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
-    rotulo_resumo = ft.Text(value=' ', size=20, color="#A6A6A6", weight=ft.FontWeight.W_500)
+    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color="#A6A6A6", size=15, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
+    categoria_rotulo = ft.Text(value='', size=15, color="#A6A6A6", weight=ft.FontWeight.W_500)
+    rotulo_resumo = ft.Text(value=' ', size=15, color="#A6A6A6", weight=ft.FontWeight.W_500)
 
     painel = ft.Container(
         padding=10,
@@ -972,7 +991,7 @@ def main(page: ft.Page):
                 ),
                 ft.Row(
                     [
-                        ft.Text(value='HISTÓRICO', size=18, weight=ft.FontWeight.BOLD, color="#A6A6A6"),
+                        ft.Text(value='HISTÓRICO', size=15, weight=ft.FontWeight.BOLD, color="#A6A6A6"),
                         btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
@@ -983,17 +1002,21 @@ def main(page: ft.Page):
         )
     )
 
-    # Inicia o app buscando o histórico atualizado
-    atualizar_historico()
+    botao_formulario =  ft.FloatingActionButton(
 
-    page.add(
-        layout,
-        ft.FloatingActionButton(
             elevation=10,
             bgcolor=verde,
             shape=ft.CircleBorder(),
             icon=ft.icons.ADD, 
             on_click=formulario)
+
+
+    # Inicia o app buscando o histórico atualizado
+    atualizar_historico()
+
+    page.add(
+        layout,
+        botao_formulario,
     )
 if __name__ == "__main__":
     ft.app(target=main, view=ft.AppView.FLET_APP)
