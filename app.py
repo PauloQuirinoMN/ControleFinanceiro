@@ -401,7 +401,7 @@ def main(page: ft.Page):
             content=ft.Text("Você tem certeza que deseja apagar todos os dados? esta ação é irreversível", color=vermelho, size=15, weight=ft.FontWeight.BOLD, italic=True),
             actions=[
                 ft.TextButton("Cancelar", on_click=lambda e: remover_alerta(alerta_confirmacao_limpeza)),
-                ft.ElevatedButton("Confirmar", bgcolor="#007B83", on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
+                ft.ElevatedButton("Confirmar", color=cor_textos, bgcolor="#007B83", on_click=lambda e: [remover_alerta(alerta_confirmacao_limpeza),
                                                                    limpardados(e)
                 ]
                 ),
@@ -492,8 +492,8 @@ def main(page: ft.Page):
         descricao_forma.update()  # Atualiza a interface
 
  
-    data_inicial = ft.Text(value='Data Inicial', size=18, weight=ft.FontWeight.W_500, color="#A6A6A6")
-    data_final = ft.Text(value='Data Final', size=18, weight=ft.FontWeight.W_500, color="#A6A6A6")
+    data_inicial = ft.Text(value='Data Inicial', size=15, weight=ft.FontWeight.W_500, color=cor_textos)
+    data_final = ft.Text(value='Data Final', size=15, weight=ft.FontWeight.W_500, color=cor_textos)
 
     def calcular_totais(df_filtrado):
         # Filtra todas as transações do tipo "Entrada"
@@ -886,13 +886,14 @@ def main(page: ft.Page):
 
       
 
-    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color="#A6A6A6", size=15, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
-    categoria_rotulo = ft.Text(value='', size=15, color="#A6A6A6", weight=ft.FontWeight.W_500)
-    rotulo_resumo = ft.Text(value=' ', size=15, color="#A6A6A6", weight=ft.FontWeight.W_500)
+    rotulo_forma = ft.Text(value=f'Antes de mais nada, defina um período com uma data inicial e uma data final, para que sejam feitas as análises sobre as transações. Depois click em entradas e/ou saídas então você verá como elas foram divididas entre as formas, como pix, dinheiro etc. Bem como a distribuição entre as categorias como alimentação, lazer entre outros e um resumo das transações.     Faça um bom Uso.', color=cor_textos, size=15, weight=ft.FontWeight.W_500, text_align=ft.TextAlign.JUSTIFY)
+    categoria_rotulo = ft.Text(value='', size=15, color=cor_textos, weight=ft.FontWeight.W_500)
+    rotulo_resumo = ft.Text(value=' ', size=15, color=cor_textos, weight=ft.FontWeight.W_500)
 
     painel = ft.Container(
+        border_radius=5,
         padding=10,
-        margin=5,
+        margin=0,
         content=ft.Column(
             [                
                 rotulo_forma,
@@ -914,7 +915,6 @@ def main(page: ft.Page):
         expand=True,
     )
 
-
     pg_analise = ft.Container(
         expand=True,
         bgcolor=preto,
@@ -931,20 +931,20 @@ def main(page: ft.Page):
                     [
                         ft.Row(
                             [
-                                ft.Text(value=" Período", color="#A6A6A6", size=20, weight=ft.FontWeight.BOLD, expand=True, text_align=ft.alignment.center_left)
+                                ft.Text(value="      PERÍODO", color=cor_textos, size=15, weight=ft.FontWeight.BOLD, text_align=ft.alignment.center_left)
                             ],
-                            alignment=ft.alignment.center_left
+                            alignment=ft.alignment.center
                         ),
                         ft.Container(
                             bgcolor=preto,
                             content=ft.Row(
                                 [
                                 data_inicial,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color="#A6A6A6", on_click=abrir_date_de),
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_de),
                                 data_final,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color="#A6A6A6", on_click=abrir_date_ate)
+                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_ate)
                                 ],
-                                alignment=ft.MainAxisAlignment.SPACE_AROUND
+                                alignment=ft.MainAxisAlignment.SPACE_EVENLY
                             ),
                         )
                     ],
@@ -991,7 +991,7 @@ def main(page: ft.Page):
                 ),
                 ft.Row(
                     [
-                        ft.Text(value='HISTÓRICO', size=15, weight=ft.FontWeight.BOLD, color="#A6A6A6"),
+                        ft.Text(value='HISTÓRICO', size=15, weight=ft.FontWeight.BOLD, color=cor_textos),
                         btn_limpardados,
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_AROUND,
