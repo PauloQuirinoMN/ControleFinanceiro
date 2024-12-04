@@ -125,7 +125,7 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Divider(),
-                ft.Text(value='Ano, Mês e Dia para períodos passados', size=15, italic=True, color=cor_textos),
+                ft.Text(value='Períodos passados', size=15, italic=True, color=cor_textos),
                 anom,
                 mesm,
                 diam,
@@ -355,7 +355,9 @@ def main(page: ft.Page):
                 forma,
                 descricao,
                 valor,
-                ft.Text(value='      A data será registrada automáticamente', color=cor_textos, size=12, italic=True),
+                ft.Text(value='      A data será registrada automáticamente.', color=cor_textos, size=12, italic=True),
+                ft.Text(value='      caso seja um registro anterior ao dia atual', color=cor_textos, size=12, italic=True),
+                ft.Text(value='      poderá a seguir definir dia, mês e ano.', color=cor_textos, size=12, italic=True),
                 data_manual,
             ]
         ),
@@ -931,7 +933,7 @@ def main(page: ft.Page):
                     [
                         ft.Row(
                             [
-                                ft.Text(value="      PERÍODO", color=cor_textos, size=15, weight=ft.FontWeight.BOLD, text_align=ft.alignment.center_left)
+                                ft.Text(value="    PERÍODO", color=cor_textos, size=15, weight=ft.FontWeight.BOLD, text_align=ft.alignment.center_left)
                             ],
                             alignment=ft.alignment.center
                         ),
