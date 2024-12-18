@@ -32,7 +32,7 @@ def main(page: ft.Page):
         width=120,
         content=ft.Row(
             [
-                ft.Icon(name=ft.icons.NORTH, color=verde),
+                ft.Icon(name=ft.Icons.NORTH, color=verde),
                 ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=cor_textos),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -44,7 +44,7 @@ def main(page: ft.Page):
         width=120,
         content=ft.Row(
             [
-                ft.Icon(name=ft.icons.SOUTH, color=vermelho),
+                ft.Icon(name=ft.Icons.SOUTH, color=vermelho),
                 ft.Text(value=0, size=18, weight=ft.FontWeight.BOLD, color=cor_textos),
             ],
             alignment=ft.MainAxisAlignment.CENTER,
@@ -93,7 +93,17 @@ def main(page: ft.Page):
             ft.dropdown.Option('Vestiuário', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
             ft.dropdown.Option('Esposte', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
             ft.dropdown.Option('Empréstimos', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),  
-            ft.dropdown.Option('Outros', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),                 
+            ft.dropdown.Option('Contas Fixas', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Investimentos', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Animal estimação', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Viajens', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Assinaturas', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Manutenção', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Presentes', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Emergências', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Diversos', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+            ft.dropdown.Option('Estudos', text_style=ft.TextStyle(size=15, color=cor_textos, weight=ft.FontWeight.BOLD)),
+
         ]
     )
      
@@ -159,7 +169,7 @@ def main(page: ft.Page):
     
     def mostrar_alerta_erro_descricao():
             alerte_erro = ft.AlertDialog(
-                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+                title=ft.Text("Presta Atenção!", color=grafite),
                 content=ft.Text('Descrição é obrigatório', color=vermelho),
                 actions=[
                     ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_erro)),
@@ -171,7 +181,7 @@ def main(page: ft.Page):
 
     def mostrar_alerta_erro_valor():
             alerte_erro = ft.AlertDialog(
-                title=ft.Text("Presta Atenção Abestado!", color=grafite),
+                title=ft.Text("Presta Atenção!", color=grafite),
                 content=ft.Text('Valor é obrigatório', color=vermelho),
                 actions=[
                     ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_erro)),
@@ -183,7 +193,7 @@ def main(page: ft.Page):
     
     def mostrar_alerta_erro_tipo():
             alerte_tipo = ft.AlertDialog(
-            title=ft.Text("Presta Atenção Abestado!", color=grafite),
+            title=ft.Text("Presta Atenção!", color=grafite),
                 content=ft.Text('Tipo é obrigatório', color=vermelho),
                 actions=[
                     ft.TextButton('Ok', on_click=lambda e: remover_alerta(alerte_tipo)),
@@ -280,8 +290,11 @@ def main(page: ft.Page):
             workbook = openpyxl.load_workbook("transacoes.xlsx")
             sheet = workbook.active
 
+            # Carregar todas as linhas começando da segunda
+            rows = list(sheet.iter_rows(min_row=2, values_only=True))
+
             # iterar sobre as linhas do excel, começando da segunda linha
-            for row in sheet.iter_rows(min_row=2, values_only=True):
+            for row in reversed(rows):
                 # Cria um novo container para cada transação
 
                 # definir a cor da borda com base no tipo de transição
@@ -558,14 +571,13 @@ def main(page: ft.Page):
             else:
                 return
     
-
     #Aqui começa o tratamento para exibir informações sobre das transações e seus valores
     # dentro do período selecionado e filtrado por entrada ou saída
     def filtrando_tipo(e):
         global data_inicial_datetime, data_final_datetime, tipo_selecao
         # Verificar se as datas inicial e final foram selecionadas
         if data_inicial_datetime is None or data_final_datetime is None :
-            snack_bar = ft.SnackBar(content=ft.Text("Por favor, selecione o período inicial e final.", color=ft.colors.BLACK), bgcolor=ft.colors.WHITE)
+            snack_bar = ft.SnackBar(content=ft.Text("Por favor, selecione o período inicial e final.", color=ft.Colors.BLACK), bgcolor=ft.Colors.WHITE)
             page.overlay.append(snack_bar)
             snack_bar.open = True
             page.update()  # Atualiza para exibir o SnackBar
@@ -586,13 +598,13 @@ def main(page: ft.Page):
                 tipo_selecao = 'ENTRADAS'
                 rotulo_forma.value = f'   Formas de {tipo_selecao} :' 
                 rotulo_forma.update()
-                categoria_rotulo.value = f'   {tipo_selecao} entre as categorias'
+                categoria_rotulo.value = f'   {tipo_selecao} entre as categorias :'
                 categoria_rotulo.update()
-                rotulo_resumo.value = f'   Resumo das {tipo_selecao}'
+                rotulo_resumo.value = f'   Resumo das {tipo_selecao}:'
                 rotulo_resumo.update()
                 df_entradas = df[df['Tipo'] == 'Entrada']
                 if df_entradas.empty:
-                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de entradas no período selecionado!", color=ft.colors.BLACK), bgcolor=ft.colors.WHITE)
+                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de entradas no período selecionado!", color=ft.Colors.BLACK), bgcolor=ft.Colors.WHITE)
                     page.overlay.append(snack_bar)
                     snack_bar.open = True
                     page.update()
@@ -616,7 +628,7 @@ def main(page: ft.Page):
                 rotulo_resumo.update()
                 df_saidas = df[df['Tipo'] == 'Saída']
                 if df_saidas.empty:
-                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de saídas no período selecionado!", color=ft.colors.BLACK),bgcolor=ft.colors.WHITE)
+                    snack_bar = ft.SnackBar(content=ft.Text("Não há registros de saídas no período selecionado!", color=ft.Colors.BLACK),bgcolor=ft.Colors.WHITE)
                     page.overlay.append(snack_bar)
                     snack_bar.open = True
                     page.update()
@@ -694,23 +706,28 @@ def main(page: ft.Page):
     datepicker_de = ft.DatePicker(
         cancel_text='Cancelar',
         confirm_text='confirmar',
-        field_hint_text='MM/DD/AAAA',
+        field_hint_text='DD/MM/AAAA',
         field_label_text='Selecione uma Data',
         help_text='Calendário',
         open=False,
         data="from_date",
-        on_change=on_date_selected 
+        on_change=on_date_selected,
+        first_date=datetime(year=2020, month=1, day=1),
+        last_date=datetime.now(),  
+
     )
 
     datepicker_ate = ft.DatePicker(
         cancel_text='Cancelar',
         confirm_text='confirmar',
-        field_hint_text='MM/DD/AAAA',
+        field_hint_text='DD/MM/AAAA',
         field_label_text='Selecione uma Data',
         help_text='Calendário',
         open=False,
         data="to_date",
-        on_change=on_date_selected 
+        on_change=on_date_selected,
+        first_date=datetime(year=2020, month=1, day=1),
+        last_date=datetime.now(), 
     )
 
     def abrir_date_de(e):
@@ -752,7 +769,7 @@ def main(page: ft.Page):
     infor_geral = ft.Container(
         padding=10,
         margin=15,
-        border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+        border=ft.border.all(width=0.5, color=ft.Colors.WHITE),
         gradient=ft.LinearGradient(
             colors=[
                 "#007B83",
@@ -870,7 +887,7 @@ def main(page: ft.Page):
                 height=250,
                 width=150,
                 margin=15,
-                shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.colors.WHITE),
+                shadow=ft.BoxShadow(spread_radius=0.5, blur_radius=1.2, color=ft.Colors.WHITE),
                 content=ft.Column(
                     controls=[nome_cat, qua_cat, val_cat, por_cat, vme_cat, vma_cat, vmi_cat],
                     alignment=ft.MainAxisAlignment.START,
@@ -925,7 +942,7 @@ def main(page: ft.Page):
             [
                 ft.Row(
                     [
-                        ft.IconButton(icon=ft.icons.CLOSE, icon_color=ft.colors.WHITE, icon_size=20, on_click=fecha_pg),
+                        ft.IconButton(icon=ft.Icons.CLOSE, icon_color=ft.Colors.WHITE, icon_size=20, on_click=fecha_pg),
                     ],
                     alignment=ft.MainAxisAlignment.END,
                 ),
@@ -942,9 +959,9 @@ def main(page: ft.Page):
                             content=ft.Row(
                                 [
                                 data_inicial,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_de),
+                                ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_de),
                                 data_final,
-                                ft.IconButton(icon=ft.icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_ate)
+                                ft.IconButton(icon=ft.Icons.CALENDAR_MONTH, icon_color=cor_textos, on_click=abrir_date_ate)
                                 ],
                                 alignment=ft.MainAxisAlignment.SPACE_EVENLY
                             ),
@@ -954,14 +971,14 @@ def main(page: ft.Page):
                 ),
                 infor_geral,
                 filtro_tipo,
-                ft.Divider(height=5, thickness=3, color=ft.colors.GREEN_100),
+                ft.Divider(height=5, thickness=3, color=ft.Colors.GREEN_100),
                 painel,
             ]
         )
     )
 
-    analise = ft.IconButton(icon=ft.icons.BAR_CHART_ROUNDED, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
-    btn_limpardados = ft.IconButton(icon=ft.icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
+    analise = ft.IconButton(icon=ft.Icons.BAR_CHART_ROUNDED, icon_color=verde, icon_size=25, on_click=abrir_pg_analise)
+    btn_limpardados = ft.IconButton(icon=ft.Icons.DELETE_FOREVER, icon_color=vermelho, icon_size=25, on_click=mostrar_alerta_confirmacao)
 
     layout = ft.Container(
         expand=True,
@@ -973,7 +990,7 @@ def main(page: ft.Page):
                 ft.Row([analise], alignment=ft.MainAxisAlignment.END),
                 ft.Container(
                     margin=15,
-                    border=ft.border.all(width=0.5, color=ft.colors.WHITE),
+                    border=ft.border.all(width=0.5, color=ft.Colors.WHITE),
                     gradient=ft.LinearGradient(
                         colors=[
                             "#007B83",
@@ -1009,7 +1026,7 @@ def main(page: ft.Page):
             elevation=10,
             bgcolor=verde,
             shape=ft.CircleBorder(),
-            icon=ft.icons.ADD, 
+            icon=ft.Icons.ADD, 
             on_click=formulario)
 
 
