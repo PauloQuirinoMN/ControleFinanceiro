@@ -54,13 +54,13 @@ O **Aplicativo de Controle Financeiro** é uma solução desenvolvida em Python 
 
 - **Alertas financeiros:** notificação para categorias ou limites de gastos excedidos.  
 - **Planejamento financeiro:** funcionalidade para definir metas e acompanhar o progresso.  
-- **Backup:** opção para salvar dados na nuvem no dispositivos.  
+- **Backup:** opção para salvar dados na nuvem ou no dispositivos.  
 
 ---
 
 ## Tecnologias Utilizadas  
 - **Linguagem:** Python  
-- **Bibliotecas:** Flet, Pandas  
+- **Bibliotecas:** Flet, Pandas, openpyxl, os, datetime 
 - **Ferramentas:** Microsoft Power BI (para análises avançadas)  
 - **Futuro:** Algoritmos de Machine Learning (scikit-learn).  
 
