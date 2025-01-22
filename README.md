@@ -6,6 +6,14 @@
 O **Aplicativo de Controle Financeiro** é uma solução desenvolvida em Python utilizando a biblioteca **Flet**, projetada para facilitar o gerenciamento de finanças pessoais. O aplicativo fornece uma interface intuitiva e eficiente para registrar e analisar transações financeiras, oferecendo insights úteis para auxiliar na tomada de decisões.
 
 ---
+<p align="center">
+  <img src="imagensapp/Screenshot_20250120-164541.png" width="15%" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="imagensapp/Screenshot_20250120-164621.png" width="15%" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="imagensapp/Screenshot_20250120-164724.png" width="15%" />
+</p>
+>
 
 ## Funcionalidades  
 ### Registro de Transações  
